@@ -1,8 +1,7 @@
 <template>
-  <div class="container mt-5">
-    <h1>Join</h1>
-    <p>Sign-up form goes here.</p>
-  </div>
+  <JoinForm />
 </template>
 
-<script setup></script>
+<script setup>
+import JoinForm from '../components/JoinForm.vue'
+</script>
