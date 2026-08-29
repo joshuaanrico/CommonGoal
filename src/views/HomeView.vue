@@ -6,7 +6,7 @@
         <h1>CommonGoal</h1>
         <p class="lead">
           Helping Melbourne community sports clubs go climate-ready and make active
-          travel — walking, riding, scooting — the default way families reach
+          travel (walking, riding, scooting) the default way families reach
           training, games and school.
         </p>
         <RouterLink to="/routes" class="btn btn-primary me-2">Find a route</RouterLink>

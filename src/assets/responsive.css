@@ -1,0 +1,54 @@
+/* Breakpoint: under 576px, 576-767px, 992-1200px, 1400px+ */
+
+body {
+  overflow-x: hidden;
+}
+
+/* under 576px: stack everything, larger tap targets */
+@media (max-width: 575.98px) {
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  .btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .btn.me-2 {
+    margin-right: 0 !important;
+  }
+}
+
+/* 576-768px: compact hero, 1-col cards */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .lead {
+    font-size: 1rem;
+  }
+}
+
+/* 992-1200px: 2-col cards */
+@media (min-width: 992px) and (max-width: 1200px) {
+  .col-lg-4 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  .col-lg-3 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+/* above 1400px: cap content width, larger hero type */
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1320px;
+  }
+
+  h1 {
+    font-size: 3rem;
+  }
+}
