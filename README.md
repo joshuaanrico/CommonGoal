@@ -1,44 +1,48 @@
-# commongoal
+# CommonGoal
 
-This template should help get you started developing with Vue 3 in Vite.
+A1.2 Basic Application Development (V1) for FIT5032. Vue 3, Vue Router,
+Bootstrap 5, PrimeVue.
 
-## Recommended IDE Setup
+CommonGoal is a fictional Melbourne not-for-profit that helps community sports
+clubs go climate-ready and makes active travel (walking, riding, scooting) the
+default way families reach training, games and school. Based in Greenvale VIC
+3059.
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Pages and Business Requirements
 
-## Recommended Browser Setup
+| Page | Route | Demonstrates |
+|---|---|---|
+| Home | `/` | **BR A.2**, responsive hero, audience cards and impact stats across all breakpoints |
+| Routes | `/routes` | **BR B.2**, local `routes.json` data rendered with `v-for`, live search and shade filter via `computed` |
+| Join | `/join` | **BR B.1**, form with required field, email format and number range validation, submissions listed in a PrimeVue DataTable |
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+**BR A.1** (framework, structure, routing) applies across the whole app: Vue 3
+Composition API, Vue Router, and components split under `src/components/` and
+`src/views/`.
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+## Run locally
 
 ```sh
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
 npm run dev
 ```
 
-### Compile and Minify for Production
+Build for production:
 
 ```sh
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+## References
 
-```sh
-npm run lint
-```
+- Nav header adapted from the [Bootstrap Headers example](https://getbootstrap.com/docs/5.0/examples/headers/)
+  and the [Bootstrap Navbar docs](https://getbootstrap.com/docs/5.0/components/navbar/),
+  collapsible hamburger menu below 768px.
+- Form validation pattern (blur and submit validation, `errors` ref object) and
+  the PrimeVue `DataTable`/`Column` usage follow the class studio pattern from
+  the FIT5032 Week 3-4 library registration exercise.
+- [PrimeVue DataTable docs](https://primevue.org/datatable/)
+- [Bootstrap docs](https://getbootstrap.com/docs/5.0/)
+
+The "Invalid PrimeUI License" badge visible in the console and UI is the
+expected PrimeVue community license watermark, not an application error.
