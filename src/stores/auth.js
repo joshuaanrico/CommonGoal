@@ -1,5 +1,4 @@
 // Auth store for CommonGoal (BR C.1, C.2).
-// Same style as the week 5 / week 7 studios: plain refs and functions, no Pinia.
 
 import { ref, computed } from 'vue'
 import {
@@ -18,10 +17,8 @@ export const isAuthenticated = computed(() => currentUser.value !== null)
 export const userRole = computed(() => userProfile.value?.role ?? null)
 export const isAdmin = computed(() => userRole.value === 'admin')
 
-// Firebase tells us who is signed in asynchronously, a bit after the app loads.
-// The router guard needs to wait for that first check to finish before deciding
-// whether to redirect, otherwise it sees "nobody signed in yet" and kicks a
-// signed-in user back to login every time they refresh the page.
+// Firebase checks who is signed in a moment after the app loads. The router
+// guard waits for this, or it wrongly redirects a signed-in user to login on every refresh.
 let resolveAuthReady
 export const authReady = new Promise((resolve) => {
   resolveAuthReady = resolve
@@ -45,9 +42,7 @@ onAuthStateChanged(auth, async (user) => {
   resolveAuthReady()
 })
 
-// Same message for every login failure. If we said "wrong password" vs "no
-// account found" separately, someone could use that to figure out which emails
-// are registered.
+// Same message for every login failure, so nobody can tell which emails have accounts.
 const GENERIC_AUTH_ERROR = 'Email or password is incorrect.'
 
 export async function register({ fullName, email, password }) {

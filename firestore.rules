@@ -1,8 +1,7 @@
-// Cloud Firestore security rules for CommonGoal (BR C.4).
-//
-// These are the server side half of the app's access control. Route guards in the Vue
-// router are a user experience layer and can be bypassed by anyone editing client code,
-// so every rule that actually matters is enforced here as well.
+// Firestore security rules for CommonGoal (BR C.4).
+// This is the server side check. The router guard in the app is just for
+// user experience, someone editing client code can skip it, so the real
+// rules live here.
 
 rules_version = '2';
 
@@ -22,55 +21,49 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // User profiles. The role field lives here, so this collection is what the whole
-    // role based access control system rests on.
+    // User profiles, and where the role field lives.
     match /users/{uid} {
 
-      // A user can read their own profile. An admin can read any single profile.
+      // Read your own profile. Admins can read anyone's.
       allow get: if isOwner(uid) || isAdmin();
 
-      // Only an admin can list every user. This backs the admin console table.
+      // Only admins can list every user, this backs the admin console table.
       allow list: if isAdmin();
 
-      // Registration can only ever create a member, and only under the caller's own uid.
-      // Prevents privilege escalation: a user cannot register or self promote to admin.
-      // Admin accounts are provisioned by hand in the Firebase console instead.
-      // hasOnly() also blocks smuggling in extra fields the app does not expect.
+      // Signing up always creates a member, never an admin. Admins are added
+      // by hand in the Firebase console. hasOnly() also blocks extra fields.
       allow create: if isOwner(uid)
                     && request.resource.data.role == 'member'
                     && request.resource.data.keys().hasOnly(['email', 'fullName', 'role', 'createdAt']);
 
-      // Nobody edits or deletes a profile through the client except an admin.
+      // Only admins can edit or delete a profile.
       allow update, delete: if isAdmin();
     }
 
-    // Route ratings. Document id is intentionally {uid}_{routeId}, which is what makes
-    // "one rating per user per route" a property of the data model rather than something
-    // the client has to remember to check.
+    // Route ratings. Doc id is {uid}_{routeId}, so one user can only ever
+    // have one rating per route.
     match /ratings/{ratingId} {
 
-      // Aggregate scores are public, so signed out visitors still see route ratings.
+      // Scores are public, so anyone can see the average, signed in or not.
       allow read: if true;
 
       allow create, update: if isSignedIn()
-                    // A user can only write a rating attributed to themselves.
+                    // You can only write a rating under your own uid.
                     && request.auth.uid == request.resource.data.uid
-                    // The document id must match the owner and route, so one user cannot
-                    // hold two ratings on the same route under different ids.
+                    // Doc id must match owner and route.
                     && ratingId == request.auth.uid + '_' + string(request.resource.data.routeId)
-                    // Same validation as the client form, enforced server side. A
-                    // modified client cannot write a score of 0, 6, or "five".
+                    // Score must be a whole number 1 to 5.
                     && request.resource.data.score is int
                     && request.resource.data.score >= 1
                     && request.resource.data.score <= 5
-                    // Caps the stored comment so a request cannot carry a large payload.
+                    // Comment capped at 300 characters.
                     && request.resource.data.comment is string
                     && request.resource.data.comment.size() <= 300;
 
-      // Moderation is an admin action.
+      // Only admins can delete a rating.
       allow delete: if isAdmin();
     }
 
-    // Anything not matched above is denied. Production mode default.
+    // Everything else is denied by default.
   }
 }
