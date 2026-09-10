@@ -1,0 +1,76 @@
+// Cloud Firestore security rules for CommonGoal (BR C.4).
+//
+// These are the server side half of the app's access control. Route guards in the Vue
+// router are a user experience layer and can be bypassed by anyone editing client code,
+// so every rule that actually matters is enforced here as well.
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // User profiles. The role field lives here, so this collection is what the whole
+    // role based access control system rests on.
+    match /users/{uid} {
+
+      // A user can read their own profile. An admin can read any single profile.
+      allow get: if isOwner(uid) || isAdmin();
+
+      // Only an admin can list every user. This backs the admin console table.
+      allow list: if isAdmin();
+
+      // Registration can only ever create a member, and only under the caller's own uid.
+      // Prevents privilege escalation: a user cannot register or self promote to admin.
+      // Admin accounts are provisioned by hand in the Firebase console instead.
+      // hasOnly() also blocks smuggling in extra fields the app does not expect.
+      allow create: if isOwner(uid)
+                    && request.resource.data.role == 'member'
+                    && request.resource.data.keys().hasOnly(['email', 'fullName', 'role', 'createdAt']);
+
+      // Nobody edits or deletes a profile through the client except an admin.
+      allow update, delete: if isAdmin();
+    }
+
+    // Route ratings. Document id is intentionally {uid}_{routeId}, which is what makes
+    // "one rating per user per route" a property of the data model rather than something
+    // the client has to remember to check.
+    match /ratings/{ratingId} {
+
+      // Aggregate scores are public, so signed out visitors still see route ratings.
+      allow read: if true;
+
+      allow create, update: if isSignedIn()
+                    // A user can only write a rating attributed to themselves.
+                    && request.auth.uid == request.resource.data.uid
+                    // The document id must match the owner and route, so one user cannot
+                    // hold two ratings on the same route under different ids.
+                    && ratingId == request.auth.uid + '_' + string(request.resource.data.routeId)
+                    // Same validation as the client form, enforced server side. A
+                    // modified client cannot write a score of 0, 6, or "five".
+                    && request.resource.data.score is int
+                    && request.resource.data.score >= 1
+                    && request.resource.data.score <= 5
+                    // Caps the stored comment so a request cannot carry a large payload.
+                    && request.resource.data.comment is string
+                    && request.resource.data.comment.size() <= 300;
+
+      // Moderation is an admin action.
+      allow delete: if isAdmin();
+    }
+
+    // Anything not matched above is denied. Production mode default.
+  }
+}
