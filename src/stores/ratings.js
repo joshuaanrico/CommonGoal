@@ -3,6 +3,7 @@
 import { ref, computed } from 'vue'
 import { collection, doc, setDoc, onSnapshot, serverTimestamp } from 'firebase/firestore'
 import { db } from '../firebase/init'
+import { sanitiseText } from '../utils/security'
 
 const ratings = ref([])
 
@@ -38,7 +39,7 @@ export async function saveRating(uid, routeId, score, comment) {
       uid,
       routeId,
       score,
-      comment,
+      comment: sanitiseText(comment, 300),
       updatedAt: serverTimestamp(),
     })
     return { ok: true }

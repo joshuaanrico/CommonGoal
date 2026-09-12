@@ -87,6 +87,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { register } from '../stores/auth'
+import { sanitiseText } from '../utils/security'
 
 const router = useRouter()
 
@@ -164,7 +165,7 @@ const submitForm = async () => {
   submitting.value = true
 
   const result = await register({
-    fullName: formData.value.fullName.trim(),
+    fullName: sanitiseText(formData.value.fullName.trim(), 80),
     email: formData.value.email,
     password: formData.value.password,
   })
