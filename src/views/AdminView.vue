@@ -14,7 +14,7 @@
     </section>
 
     <section class="mt-5">
-      <h2 class="h4">Route rating aggregates</h2>
+      <h2 class="h4">Route ratings</h2>
       <DataTable :value="ratingSummary" tableStyle="min-width: 40rem" :loading="loadingRatings">
         <Column field="name" header="Route"></Column>
         <Column field="average" header="Average"></Column>

@@ -42,6 +42,7 @@
               <li>Shade: {{ route.hasShade ? 'Yes' : 'No' }}</li>
               <li>Step-free: {{ route.stepFree ? 'Yes' : 'No' }}</li>
             </ul>
+            <RouteRating :route-id="route.id" />
           </div>
         </div>
       </div>
@@ -56,6 +57,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import routes from '../assets/json/routes.json'
+import RouteRating from '../components/RouteRating.vue'
 
 const searchTerm = ref('')
 const shadeOnly = ref(false)
