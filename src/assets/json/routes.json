@@ -7,7 +7,9 @@
     "surface": "sealed path",
     "hasShade": true,
     "stepFree": true,
-    "description": "Flat loop around the reservoir with mature trees for shade, good for families walking to weekend sport."
+    "description": "Flat loop around the reservoir with mature trees for shade, good for families walking to weekend sport.",
+    "lat": -37.6417,
+    "lng": 144.88
   },
   {
     "id": 2,
@@ -17,7 +19,9 @@
     "surface": "shared path",
     "hasShade": false,
     "stepFree": true,
-    "description": "Creek-side shared path connecting Craigieburn to the regional sports precinct."
+    "description": "Creek-side shared path connecting Craigieburn to the regional sports precinct.",
+    "lat": -37.592,
+    "lng": 144.909
   },
   {
     "id": 3,
@@ -27,7 +31,9 @@
     "surface": "sealed path",
     "hasShade": true,
     "stepFree": true,
-    "description": "Short circuit through the park, popular pre-training warm-up walk for junior football."
+    "description": "Short circuit through the park, popular pre-training warm-up walk for junior football.",
+    "lat": -37.6935,
+    "lng": 144.8795
   },
   {
     "id": 4,
@@ -37,7 +43,9 @@
     "surface": "footpath",
     "hasShade": false,
     "stepFree": true,
-    "description": "Direct footpath route linking the housing estate to Attwood Oval."
+    "description": "Direct footpath route linking the housing estate to Attwood Oval.",
+    "lat": -37.687,
+    "lng": 144.904
   },
   {
     "id": 5,
@@ -47,7 +55,9 @@
     "surface": "gravel path",
     "hasShade": false,
     "stepFree": false,
-    "description": "Reserve path with a few unpaved sections, best for older kids and adults."
+    "description": "Reserve path with a few unpaved sections, best for older kids and adults.",
+    "lat": -37.704,
+    "lng": 144.876
   },
   {
     "id": 6,
@@ -57,7 +67,9 @@
     "surface": "sealed path",
     "hasShade": true,
     "stepFree": true,
-    "description": "Shaded linear park path running past the community sports centre."
+    "description": "Shaded linear park path running past the community sports centre.",
+    "lat": -37.647,
+    "lng": 144.913
   },
   {
     "id": 7,
@@ -67,7 +79,9 @@
     "surface": "boardwalk and path",
     "hasShade": true,
     "stepFree": true,
-    "description": "Wetlands boardwalk section, cool and shaded even on hot training days."
+    "description": "Wetlands boardwalk section, cool and shaded even on hot training days.",
+    "lat": -37.621,
+    "lng": 144.934
   },
   {
     "id": 8,
@@ -77,6 +91,8 @@
     "surface": "sealed path",
     "hasShade": false,
     "stepFree": true,
-    "description": "Loop connecting the housing area directly to the sports precinct entrance."
+    "description": "Loop connecting the housing area directly to the sports precinct entrance.",
+    "lat": -37.672,
+    "lng": 144.883
   }
 ]
