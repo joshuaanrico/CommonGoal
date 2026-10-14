@@ -21,6 +21,17 @@ export default defineConfig([
     },
   },
 
+  // Cloud Functions run on Node with CommonJS, not in the browser.
+  {
+    files: ['functions/**/*.js'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+
   js.configs.recommended,
   ...pluginVue.configs['flat/essential'],
 

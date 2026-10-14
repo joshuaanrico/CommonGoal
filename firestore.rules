@@ -36,8 +36,24 @@ service cloud.firestore {
                     && request.resource.data.role == 'member'
                     && request.resource.data.keys().hasOnly(['email', 'fullName', 'role', 'createdAt']);
 
-      // Only admins can edit or delete a profile.
-      allow update, delete: if isAdmin();
+      // Only admins can edit or delete a profile, and even they cannot change a role from the
+      // browser. Roles change only through the setUserRole Cloud Function, which logs it.
+      allow update: if isAdmin()
+                    && request.resource.data.role == resource.data.role;
+      allow delete: if isAdmin();
+    }
+
+    // Per-route average and count, written only by the onRatingWritten Cloud Function
+    // (the Admin SDK skips these rules). Public read, no client writes at all.
+    match /routeStats/{routeId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Audit log of role changes, written by setUserRole. Admins can read it.
+    match /roleChanges/{changeId} {
+      allow read: if isAdmin();
+      allow write: if false;
     }
 
     // Route ratings. Doc id is {uid}_{routeId}, so one user can only ever
