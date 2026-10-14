@@ -5,6 +5,9 @@
     <section class="mt-4">
       <h2 class="h4">Registered users</h2>
       <div class="alert alert-danger" v-if="loadError">{{ loadError }}</div>
+      <div class="alert" :class="actionOk ? 'alert-success' : 'alert-danger'" role="status" v-if="actionMessage">
+        {{ actionMessage }}
+      </div>
       <label for="usersSearch" class="form-label">Search users</label>
       <input
         id="usersSearch"
@@ -67,11 +70,31 @@
         <Column field="createdAtMs" header="Created" sortable>
           <template #body="{ data }">{{ data.createdLabel }}</template>
         </Column>
+        <!-- Calls the setUserRole Cloud Function, the only place a role can change. -->
+        <Column header="Action">
+          <template #body="{ data }">
+            <span class="small text-body-secondary" v-if="data.uid === currentUser?.uid">You</span>
+            <button
+              v-else
+              type="button"
+              class="btn btn-sm btn-outline-primary"
+              :disabled="busyUid === data.uid"
+              @click="toggleRole(data)"
+            >
+              {{ busyUid === data.uid ? 'Saving...' : data.role === 'admin' ? 'Make member' : 'Make admin' }}
+            </button>
+          </template>
+        </Column>
       </DataTable>
     </section>
 
     <section class="mt-5">
-      <h2 class="h4">Route ratings</h2>
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <h2 class="h4 mb-0">Route ratings</h2>
+        <button type="button" class="btn btn-sm btn-outline-secondary" :disabled="rebuilding" @click="rebuildStats">
+          {{ rebuilding ? 'Recalculating...' : 'Recalculate route stats' }}
+        </button>
+      </div>
       <DataTable
         :value="ratingSummary"
         paginator
@@ -96,7 +119,39 @@ import { ref, onMounted } from 'vue'
 import { collection, getDocs } from 'firebase/firestore'
 import { FilterMatchMode } from '@primevue/core/api'
 import { db } from '../firebase/init'
+import { currentUser } from '../stores/auth'
+import { callFunction } from '../api/functions'
 import routes from '../assets/json/routes.json'
+
+const busyUid = ref(null)
+const rebuilding = ref(false)
+const actionMessage = ref('')
+const actionOk = ref(true)
+
+const showResult = (ok, message) => {
+  actionOk.value = ok
+  actionMessage.value = message
+}
+
+const toggleRole = async (user) => {
+  const role = user.role === 'admin' ? 'member' : 'admin'
+  busyUid.value = user.uid
+  const result = await callFunction('setUserRole', { uid: user.uid, role })
+  busyUid.value = null
+  if (result.ok) {
+    user.role = role
+    showResult(true, `${user.email} is now ${role === 'admin' ? 'an admin' : 'a member'}.`)
+  } else {
+    showResult(false, result.error)
+  }
+}
+
+const rebuildStats = async () => {
+  rebuilding.value = true
+  const result = await callFunction('rebuildRouteStats')
+  rebuilding.value = false
+  showResult(result.ok, result.ok ? `Recalculated stats for ${result.data.rebuilt} routes.` : result.error)
+}
 
 const userFilters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
