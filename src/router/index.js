@@ -15,6 +15,8 @@ const routes = [
   { path: '/', name: 'Home', component: HomeView },
   { path: '/routes', name: 'Routes', component: RoutesView },
   { path: '/join', name: 'Join', component: JoinView },
+  // Lazy loaded: Mapbox is large, so it only downloads when someone opens the map.
+  { path: '/map', name: 'Map', component: () => import('../views/MapView.vue') },
   { path: '/clubs', name: 'Clubs', component: ClubsView },
   { path: '/events', name: 'Events', component: EventsView },
   { path: '/register', name: 'Register', component: RegisterView },
