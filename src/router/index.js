@@ -7,12 +7,16 @@ import LoginView from '../views/LoginView.vue'
 import DashboardView from '../views/DashboardView.vue'
 import AccessDeniedView from '../views/AccessDeniedView.vue'
 import AdminView from '../views/AdminView.vue'
+import ClubsView from '../views/ClubsView.vue'
+import EventsView from '../views/EventsView.vue'
 import { authReady, isAuthenticated, userRole } from '../stores/auth'
 
 const routes = [
   { path: '/', name: 'Home', component: HomeView },
   { path: '/routes', name: 'Routes', component: RoutesView },
   { path: '/join', name: 'Join', component: JoinView },
+  { path: '/clubs', name: 'Clubs', component: ClubsView },
+  { path: '/events', name: 'Events', component: EventsView },
   { path: '/register', name: 'Register', component: RegisterView },
   { path: '/login', name: 'Login', component: LoginView },
   { path: '/dashboard', name: 'Dashboard', component: DashboardView, meta: { requiresAuth: true } },

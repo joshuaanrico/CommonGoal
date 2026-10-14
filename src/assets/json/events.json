@@ -1,0 +1,402 @@
+[
+  {
+    "id": 1,
+    "title": "Clubroom Energy Audit, Thomastown",
+    "category": "Workshop",
+    "suburb": "Thomastown",
+    "date": "2026-10-18",
+    "capacity": 79,
+    "booked": 26,
+    "free": true
+  },
+  {
+    "id": 2,
+    "title": "Walk to the Game, Glenroy",
+    "category": "Walking",
+    "suburb": "Glenroy",
+    "date": "2026-10-18",
+    "capacity": 26,
+    "booked": 23,
+    "free": false
+  },
+  {
+    "id": 3,
+    "title": "Ride to Training Day, Pascoe Vale",
+    "category": "Cycling",
+    "suburb": "Pascoe Vale",
+    "date": "2026-10-19",
+    "capacity": 100,
+    "booked": 78,
+    "free": false
+  },
+  {
+    "id": 4,
+    "title": "Walk to the Game, Reservoir",
+    "category": "Walking",
+    "suburb": "Reservoir",
+    "date": "2026-10-20",
+    "capacity": 49,
+    "booked": 17,
+    "free": true
+  },
+  {
+    "id": 5,
+    "title": "Club Tree Planting, Brunswick",
+    "category": "Greening",
+    "suburb": "Brunswick",
+    "date": "2026-10-25",
+    "capacity": 90,
+    "booked": 9,
+    "free": true
+  },
+  {
+    "id": 6,
+    "title": "Clubroom Energy Audit, Gladstone Park",
+    "category": "Workshop",
+    "suburb": "Gladstone Park",
+    "date": "2026-10-29",
+    "capacity": 79,
+    "booked": 38,
+    "free": true
+  },
+  {
+    "id": 7,
+    "title": "Ride to Training Day, Greenvale",
+    "category": "Cycling",
+    "suburb": "Greenvale",
+    "date": "2026-10-31",
+    "capacity": 53,
+    "booked": 16,
+    "free": true
+  },
+  {
+    "id": 8,
+    "title": "Family Fun Walk, Brunswick",
+    "category": "Walking",
+    "suburb": "Brunswick",
+    "date": "2026-11-01",
+    "capacity": 114,
+    "booked": 108,
+    "free": true
+  },
+  {
+    "id": 9,
+    "title": "Walk to the Game, Greenvale",
+    "category": "Walking",
+    "suburb": "Greenvale",
+    "date": "2026-11-04",
+    "capacity": 60,
+    "booked": 60,
+    "free": false
+  },
+  {
+    "id": 10,
+    "title": "Bike Maintenance Clinic, Essendon",
+    "category": "Workshop",
+    "suburb": "Essendon",
+    "date": "2026-11-05",
+    "capacity": 47,
+    "booked": 20,
+    "free": true
+  },
+  {
+    "id": 11,
+    "title": "Clubroom Energy Audit, Coburg",
+    "category": "Workshop",
+    "suburb": "Coburg",
+    "date": "2026-11-08",
+    "capacity": 66,
+    "booked": 58,
+    "free": true
+  },
+  {
+    "id": 12,
+    "title": "Heat-Safe Sport Briefing, Westmeadows",
+    "category": "Workshop",
+    "suburb": "Westmeadows",
+    "date": "2026-11-10",
+    "capacity": 51,
+    "booked": 6,
+    "free": true
+  },
+  {
+    "id": 13,
+    "title": "Scoot Safe Workshop, Pascoe Vale",
+    "category": "Workshop",
+    "suburb": "Pascoe Vale",
+    "date": "2026-11-13",
+    "capacity": 90,
+    "booked": 84,
+    "free": true
+  },
+  {
+    "id": 14,
+    "title": "Scoot Safe Workshop, Broadmeadows",
+    "category": "Workshop",
+    "suburb": "Broadmeadows",
+    "date": "2026-11-14",
+    "capacity": 46,
+    "booked": 21,
+    "free": true
+  },
+  {
+    "id": 15,
+    "title": "Scoot Safe Workshop, Tullamarine",
+    "category": "Workshop",
+    "suburb": "Tullamarine",
+    "date": "2026-11-16",
+    "capacity": 67,
+    "booked": 30,
+    "free": false
+  },
+  {
+    "id": 16,
+    "title": "Walk to the Game, Pascoe Vale",
+    "category": "Walking",
+    "suburb": "Pascoe Vale",
+    "date": "2026-11-21",
+    "capacity": 39,
+    "booked": 6,
+    "free": true
+  },
+  {
+    "id": 17,
+    "title": "Scoot Safe Workshop, Reservoir",
+    "category": "Workshop",
+    "suburb": "Reservoir",
+    "date": "2026-11-24",
+    "capacity": 61,
+    "booked": 25,
+    "free": true
+  },
+  {
+    "id": 18,
+    "title": "Family Fun Walk, Craigieburn",
+    "category": "Walking",
+    "suburb": "Craigieburn",
+    "date": "2026-11-24",
+    "capacity": 105,
+    "booked": 62,
+    "free": true
+  },
+  {
+    "id": 19,
+    "title": "Bike Bus to School, Glenroy",
+    "category": "Cycling",
+    "suburb": "Glenroy",
+    "date": "2026-11-25",
+    "capacity": 89,
+    "booked": 85,
+    "free": false
+  },
+  {
+    "id": 20,
+    "title": "Heat-Safe Sport Briefing, Preston",
+    "category": "Workshop",
+    "suburb": "Preston",
+    "date": "2026-11-26",
+    "capacity": 101,
+    "booked": 52,
+    "free": true
+  },
+  {
+    "id": 21,
+    "title": "Creek Clean-Up Ride, Brunswick",
+    "category": "Greening",
+    "suburb": "Brunswick",
+    "date": "2026-11-26",
+    "capacity": 72,
+    "booked": 21,
+    "free": false
+  },
+  {
+    "id": 22,
+    "title": "Ride to Training Day, Craigieburn",
+    "category": "Cycling",
+    "suburb": "Craigieburn",
+    "date": "2026-11-28",
+    "capacity": 98,
+    "booked": 86,
+    "free": false
+  },
+  {
+    "id": 23,
+    "title": "Walk to the Game, Glenroy",
+    "category": "Walking",
+    "suburb": "Glenroy",
+    "date": "2026-11-30",
+    "capacity": 68,
+    "booked": 25,
+    "free": true
+  },
+  {
+    "id": 24,
+    "title": "Scoot Safe Workshop, Broadmeadows",
+    "category": "Workshop",
+    "suburb": "Broadmeadows",
+    "date": "2026-12-03",
+    "capacity": 58,
+    "booked": 17,
+    "free": false
+  },
+  {
+    "id": 25,
+    "title": "Club Tree Planting, Glenroy",
+    "category": "Greening",
+    "suburb": "Glenroy",
+    "date": "2026-12-03",
+    "capacity": 65,
+    "booked": 65,
+    "free": false
+  },
+  {
+    "id": 26,
+    "title": "Family Fun Walk, Glenroy",
+    "category": "Walking",
+    "suburb": "Glenroy",
+    "date": "2026-12-03",
+    "capacity": 70,
+    "booked": 15,
+    "free": true
+  },
+  {
+    "id": 27,
+    "title": "Walk to the Game, Keilor",
+    "category": "Walking",
+    "suburb": "Keilor",
+    "date": "2026-12-05",
+    "capacity": 119,
+    "booked": 62,
+    "free": true
+  },
+  {
+    "id": 28,
+    "title": "Ride to Training Day, Coburg",
+    "category": "Cycling",
+    "suburb": "Coburg",
+    "date": "2026-12-07",
+    "capacity": 100,
+    "booked": 15,
+    "free": true
+  },
+  {
+    "id": 29,
+    "title": "Walk to the Game, Epping",
+    "category": "Walking",
+    "suburb": "Epping",
+    "date": "2026-12-09",
+    "capacity": 78,
+    "booked": 30,
+    "free": true
+  },
+  {
+    "id": 30,
+    "title": "Scoot Safe Workshop, Keilor",
+    "category": "Workshop",
+    "suburb": "Keilor",
+    "date": "2026-12-10",
+    "capacity": 31,
+    "booked": 5,
+    "free": true
+  },
+  {
+    "id": 31,
+    "title": "Club Tree Planting, Epping",
+    "category": "Greening",
+    "suburb": "Epping",
+    "date": "2026-12-11",
+    "capacity": 53,
+    "booked": 4,
+    "free": true
+  },
+  {
+    "id": 32,
+    "title": "Bike Bus to School, Gladstone Park",
+    "category": "Cycling",
+    "suburb": "Gladstone Park",
+    "date": "2026-12-12",
+    "capacity": 67,
+    "booked": 27,
+    "free": true
+  },
+  {
+    "id": 33,
+    "title": "Scoot Safe Workshop, Gladstone Park",
+    "category": "Workshop",
+    "suburb": "Gladstone Park",
+    "date": "2026-12-13",
+    "capacity": 51,
+    "booked": 7,
+    "free": true
+  },
+  {
+    "id": 34,
+    "title": "Heat-Safe Sport Briefing, Tullamarine",
+    "category": "Workshop",
+    "suburb": "Tullamarine",
+    "date": "2026-12-14",
+    "capacity": 62,
+    "booked": 48,
+    "free": true
+  },
+  {
+    "id": 35,
+    "title": "Family Fun Walk, Coburg",
+    "category": "Walking",
+    "suburb": "Coburg",
+    "date": "2026-12-14",
+    "capacity": 39,
+    "booked": 5,
+    "free": false
+  },
+  {
+    "id": 36,
+    "title": "Clubroom Energy Audit, Glenroy",
+    "category": "Workshop",
+    "suburb": "Glenroy",
+    "date": "2026-12-15",
+    "capacity": 32,
+    "booked": 19,
+    "free": true
+  },
+  {
+    "id": 37,
+    "title": "Scoot Safe Workshop, Greenvale",
+    "category": "Workshop",
+    "suburb": "Greenvale",
+    "date": "2026-12-15",
+    "capacity": 112,
+    "booked": 101,
+    "free": true
+  },
+  {
+    "id": 38,
+    "title": "Creek Clean-Up Ride, Tullamarine",
+    "category": "Greening",
+    "suburb": "Tullamarine",
+    "date": "2026-12-19",
+    "capacity": 44,
+    "booked": 31,
+    "free": true
+  },
+  {
+    "id": 39,
+    "title": "Creek Clean-Up Ride, Craigieburn",
+    "category": "Greening",
+    "suburb": "Craigieburn",
+    "date": "2026-12-23",
+    "capacity": 96,
+    "booked": 22,
+    "free": true
+  },
+  {
+    "id": 40,
+    "title": "Club Tree Planting, Gladstone Park",
+    "category": "Greening",
+    "suburb": "Gladstone Park",
+    "date": "2026-12-30",
+    "capacity": 80,
+    "booked": 25,
+    "free": true
+  }
+]

@@ -24,6 +24,12 @@
             <RouterLink to="/routes" class="nav-link" active-class="active">Routes</RouterLink>
           </li>
           <li class="nav-item">
+            <RouterLink to="/clubs" class="nav-link" active-class="active">Clubs</RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink to="/events" class="nav-link" active-class="active">Events</RouterLink>
+          </li>
+          <li class="nav-item">
             <RouterLink to="/join" class="nav-link" active-class="active">Join</RouterLink>
           </li>
 

@@ -5,20 +5,87 @@
     <section class="mt-4">
       <h2 class="h4">Registered users</h2>
       <div class="alert alert-danger" v-if="loadError">{{ loadError }}</div>
-      <DataTable :value="users" tableStyle="min-width: 40rem" :loading="loadingUsers">
-        <Column field="email" header="Email"></Column>
-        <Column field="fullName" header="Name"></Column>
-        <Column field="role" header="Role"></Column>
-        <Column field="createdLabel" header="Created"></Column>
+      <label for="usersSearch" class="form-label">Search users</label>
+      <input
+        id="usersSearch"
+        type="search"
+        class="form-control mb-3"
+        placeholder="Email, name or role"
+        v-model="userFilters.global.value"
+      />
+      <DataTable
+        :value="users"
+        v-model:filters="userFilters"
+        filterDisplay="row"
+        :globalFilterFields="['email', 'fullName', 'role']"
+        paginator
+        :rows="10"
+        :rowsPerPageOptions="[10, 20, 50]"
+        removableSort
+        scrollable
+        tableStyle="min-width: 40rem"
+        dataKey="uid"
+        :loading="loadingUsers"
+      >
+        <template #empty>No users match.</template>
+        <Column field="email" header="Email" sortable :showFilterMenu="false">
+          <template #filter="{ filterModel, filterCallback }">
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              aria-label="Filter by email"
+              v-model="filterModel.value"
+              @input="filterCallback()"
+            />
+          </template>
+        </Column>
+        <Column field="fullName" header="Name" sortable :showFilterMenu="false">
+          <template #filter="{ filterModel, filterCallback }">
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              aria-label="Filter by name"
+              v-model="filterModel.value"
+              @input="filterCallback()"
+            />
+          </template>
+        </Column>
+        <Column field="role" header="Role" sortable :showFilterMenu="false">
+          <template #filter="{ filterModel, filterCallback }">
+            <select
+              class="form-select form-select-sm"
+              aria-label="Filter by role"
+              v-model="filterModel.value"
+              @change="filterCallback()"
+            >
+              <option :value="null">All</option>
+              <option value="member">member</option>
+              <option value="admin">admin</option>
+            </select>
+          </template>
+        </Column>
+        <Column field="createdAtMs" header="Created" sortable>
+          <template #body="{ data }">{{ data.createdLabel }}</template>
+        </Column>
       </DataTable>
     </section>
 
     <section class="mt-5">
       <h2 class="h4">Route ratings</h2>
-      <DataTable :value="ratingSummary" tableStyle="min-width: 40rem" :loading="loadingRatings">
-        <Column field="name" header="Route"></Column>
-        <Column field="average" header="Average"></Column>
-        <Column field="count" header="Ratings"></Column>
+      <DataTable
+        :value="ratingSummary"
+        paginator
+        :rows="10"
+        removableSort
+        scrollable
+        tableStyle="min-width: 40rem"
+        :loading="loadingRatings"
+      >
+        <Column field="name" header="Route" sortable></Column>
+        <Column field="sortKey" header="Average" sortable>
+          <template #body="{ data }">{{ data.average }}</template>
+        </Column>
+        <Column field="count" header="Ratings" sortable></Column>
       </DataTable>
     </section>
   </div>
@@ -27,8 +94,16 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { collection, getDocs } from 'firebase/firestore'
+import { FilterMatchMode } from '@primevue/core/api'
 import { db } from '../firebase/init'
 import routes from '../assets/json/routes.json'
+
+const userFilters = ref({
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  email: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  fullName: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  role: { value: null, matchMode: FilterMatchMode.EQUALS },
+})
 
 const users = ref([])
 const loadingUsers = ref(true)
@@ -42,10 +117,12 @@ onMounted(async () => {
     users.value = usersSnap.docs.map((docSnap) => {
       const data = docSnap.data()
       return {
+        uid: docSnap.id,
         email: data.email,
         fullName: data.fullName,
         role: data.role,
-        createdLabel: data.createdAt?.toDate().toLocaleDateString() ?? 'unknown',
+        createdAtMs: data.createdAt?.toMillis() ?? 0,
+        createdLabel: data.createdAt?.toDate().toLocaleDateString('en-AU') ?? 'unknown',
       }
     })
   } catch (error) {

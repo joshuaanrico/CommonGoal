@@ -1,0 +1,502 @@
+[
+  {
+    "id": 1,
+    "name": "Westmeadows Junior Football Club",
+    "sport": "Australian Rules",
+    "suburb": "Westmeadows",
+    "members": 580,
+    "activeTravelPct": 59,
+    "climateLevel": "Gold",
+    "joinedYear": 2024
+  },
+  {
+    "id": 2,
+    "name": "Brunswick United Football Club",
+    "sport": "Australian Rules",
+    "suburb": "Brunswick",
+    "members": 469,
+    "activeTravelPct": 33,
+    "climateLevel": "Gold",
+    "joinedYear": 2026
+  },
+  {
+    "id": 3,
+    "name": "Gladstone Park Junior Football Club",
+    "sport": "Australian Rules",
+    "suburb": "Gladstone Park",
+    "members": 252,
+    "activeTravelPct": 28,
+    "climateLevel": "Gold",
+    "joinedYear": 2025
+  },
+  {
+    "id": 4,
+    "name": "Preston Park Rugby League Club",
+    "sport": "Rugby League",
+    "suburb": "Preston",
+    "members": 348,
+    "activeTravelPct": 57,
+    "climateLevel": "Gold",
+    "joinedYear": 2023
+  },
+  {
+    "id": 5,
+    "name": "Glenroy Rovers Cricket Club",
+    "sport": "Cricket",
+    "suburb": "Glenroy",
+    "members": 445,
+    "activeTravelPct": 62,
+    "climateLevel": "Bronze",
+    "joinedYear": 2026
+  },
+  {
+    "id": 6,
+    "name": "Tullamarine Junior Tennis Club",
+    "sport": "Tennis",
+    "suburb": "Tullamarine",
+    "members": 274,
+    "activeTravelPct": 11,
+    "climateLevel": "Gold",
+    "joinedYear": 2020
+  },
+  {
+    "id": 7,
+    "name": "Westmeadows United Basketball Club",
+    "sport": "Basketball",
+    "suburb": "Westmeadows",
+    "members": 275,
+    "activeTravelPct": 62,
+    "climateLevel": "Gold",
+    "joinedYear": 2021
+  },
+  {
+    "id": 8,
+    "name": "Greenvale Park Football Club",
+    "sport": "Australian Rules",
+    "suburb": "Greenvale",
+    "members": 242,
+    "activeTravelPct": 60,
+    "climateLevel": "Silver",
+    "joinedYear": 2025
+  },
+  {
+    "id": 9,
+    "name": "Greenvale Soccer Club",
+    "sport": "Soccer",
+    "suburb": "Greenvale",
+    "members": 170,
+    "activeTravelPct": 56,
+    "climateLevel": "Gold",
+    "joinedYear": 2026
+  },
+  {
+    "id": 10,
+    "name": "Mill Park Rovers Cricket Club",
+    "sport": "Cricket",
+    "suburb": "Mill Park",
+    "members": 387,
+    "activeTravelPct": 15,
+    "climateLevel": "Bronze",
+    "joinedYear": 2019
+  },
+  {
+    "id": 11,
+    "name": "Greenvale Junior Little Athletics",
+    "sport": "Athletics",
+    "suburb": "Greenvale",
+    "members": 460,
+    "activeTravelPct": 11,
+    "climateLevel": "Bronze",
+    "joinedYear": 2019
+  },
+  {
+    "id": 12,
+    "name": "Keilor Rovers Football Club",
+    "sport": "Australian Rules",
+    "suburb": "Keilor",
+    "members": 552,
+    "activeTravelPct": 62,
+    "climateLevel": "Silver",
+    "joinedYear": 2021
+  },
+  {
+    "id": 13,
+    "name": "Westmeadows Rovers Football Club",
+    "sport": "Australian Rules",
+    "suburb": "Westmeadows",
+    "members": 206,
+    "activeTravelPct": 25,
+    "climateLevel": "Bronze",
+    "joinedYear": 2022
+  },
+  {
+    "id": 14,
+    "name": "Pascoe Vale Rovers Basketball Club",
+    "sport": "Basketball",
+    "suburb": "Pascoe Vale",
+    "members": 638,
+    "activeTravelPct": 45,
+    "climateLevel": "Silver",
+    "joinedYear": 2022
+  },
+  {
+    "id": 15,
+    "name": "Essendon Rovers Netball Club",
+    "sport": "Netball",
+    "suburb": "Essendon",
+    "members": 194,
+    "activeTravelPct": 28,
+    "climateLevel": "Silver",
+    "joinedYear": 2023
+  },
+  {
+    "id": 16,
+    "name": "Preston Junior Little Athletics",
+    "sport": "Athletics",
+    "suburb": "Preston",
+    "members": 255,
+    "activeTravelPct": 30,
+    "climateLevel": "Bronze",
+    "joinedYear": 2022
+  },
+  {
+    "id": 17,
+    "name": "Coburg Junior Tennis Club",
+    "sport": "Tennis",
+    "suburb": "Coburg",
+    "members": 620,
+    "activeTravelPct": 43,
+    "climateLevel": "Getting started",
+    "joinedYear": 2022
+  },
+  {
+    "id": 18,
+    "name": "Westmeadows Rovers Cricket Club",
+    "sport": "Cricket",
+    "suburb": "Westmeadows",
+    "members": 482,
+    "activeTravelPct": 21,
+    "climateLevel": "Getting started",
+    "joinedYear": 2025
+  },
+  {
+    "id": 19,
+    "name": "Brunswick Junior Basketball Club",
+    "sport": "Basketball",
+    "suburb": "Brunswick",
+    "members": 245,
+    "activeTravelPct": 15,
+    "climateLevel": "Gold",
+    "joinedYear": 2022
+  },
+  {
+    "id": 20,
+    "name": "Tullamarine Little Athletics",
+    "sport": "Athletics",
+    "suburb": "Tullamarine",
+    "members": 275,
+    "activeTravelPct": 54,
+    "climateLevel": "Gold",
+    "joinedYear": 2026
+  },
+  {
+    "id": 21,
+    "name": "Thomastown Districts Basketball Club",
+    "sport": "Basketball",
+    "suburb": "Thomastown",
+    "members": 645,
+    "activeTravelPct": 67,
+    "climateLevel": "Silver",
+    "joinedYear": 2024
+  },
+  {
+    "id": 22,
+    "name": "Brunswick Junior Football Club",
+    "sport": "Australian Rules",
+    "suburb": "Brunswick",
+    "members": 323,
+    "activeTravelPct": 37,
+    "climateLevel": "Getting started",
+    "joinedYear": 2023
+  },
+  {
+    "id": 23,
+    "name": "Craigieburn Soccer Club",
+    "sport": "Soccer",
+    "suburb": "Craigieburn",
+    "members": 287,
+    "activeTravelPct": 6,
+    "climateLevel": "Getting started",
+    "joinedYear": 2025
+  },
+  {
+    "id": 24,
+    "name": "Brunswick Hockey Club",
+    "sport": "Hockey",
+    "suburb": "Brunswick",
+    "members": 500,
+    "activeTravelPct": 52,
+    "climateLevel": "Silver",
+    "joinedYear": 2020
+  },
+  {
+    "id": 25,
+    "name": "Sunbury Junior Little Athletics",
+    "sport": "Athletics",
+    "suburb": "Sunbury",
+    "members": 275,
+    "activeTravelPct": 31,
+    "climateLevel": "Silver",
+    "joinedYear": 2025
+  },
+  {
+    "id": 26,
+    "name": "Broadmeadows Rovers Rugby League Club",
+    "sport": "Rugby League",
+    "suburb": "Broadmeadows",
+    "members": 412,
+    "activeTravelPct": 17,
+    "climateLevel": "Gold",
+    "joinedYear": 2019
+  },
+  {
+    "id": 27,
+    "name": "Preston Rovers Soccer Club",
+    "sport": "Soccer",
+    "suburb": "Preston",
+    "members": 557,
+    "activeTravelPct": 31,
+    "climateLevel": "Silver",
+    "joinedYear": 2026
+  },
+  {
+    "id": 28,
+    "name": "Fawkner United Soccer Club",
+    "sport": "Soccer",
+    "suburb": "Fawkner",
+    "members": 211,
+    "activeTravelPct": 68,
+    "climateLevel": "Getting started",
+    "joinedYear": 2024
+  },
+  {
+    "id": 29,
+    "name": "Fawkner Districts Rugby League Club",
+    "sport": "Rugby League",
+    "suburb": "Fawkner",
+    "members": 416,
+    "activeTravelPct": 45,
+    "climateLevel": "Bronze",
+    "joinedYear": 2025
+  },
+  {
+    "id": 30,
+    "name": "Thomastown United Cricket Club",
+    "sport": "Cricket",
+    "suburb": "Thomastown",
+    "members": 63,
+    "activeTravelPct": 64,
+    "climateLevel": "Bronze",
+    "joinedYear": 2021
+  },
+  {
+    "id": 31,
+    "name": "Broadmeadows Football Club",
+    "sport": "Australian Rules",
+    "suburb": "Broadmeadows",
+    "members": 215,
+    "activeTravelPct": 26,
+    "climateLevel": "Getting started",
+    "joinedYear": 2019
+  },
+  {
+    "id": 32,
+    "name": "Preston United Little Athletics",
+    "sport": "Athletics",
+    "suburb": "Preston",
+    "members": 615,
+    "activeTravelPct": 29,
+    "climateLevel": "Getting started",
+    "joinedYear": 2025
+  },
+  {
+    "id": 33,
+    "name": "Coburg Districts Football Club",
+    "sport": "Australian Rules",
+    "suburb": "Coburg",
+    "members": 390,
+    "activeTravelPct": 15,
+    "climateLevel": "Getting started",
+    "joinedYear": 2022
+  },
+  {
+    "id": 34,
+    "name": "Gladstone Park Districts Soccer Club",
+    "sport": "Soccer",
+    "suburb": "Gladstone Park",
+    "members": 507,
+    "activeTravelPct": 57,
+    "climateLevel": "Bronze",
+    "joinedYear": 2024
+  },
+  {
+    "id": 35,
+    "name": "Thomastown Tennis Club",
+    "sport": "Tennis",
+    "suburb": "Thomastown",
+    "members": 262,
+    "activeTravelPct": 42,
+    "climateLevel": "Silver",
+    "joinedYear": 2026
+  },
+  {
+    "id": 36,
+    "name": "Gladstone Park Park Tennis Club",
+    "sport": "Tennis",
+    "suburb": "Gladstone Park",
+    "members": 349,
+    "activeTravelPct": 69,
+    "climateLevel": "Bronze",
+    "joinedYear": 2019
+  },
+  {
+    "id": 37,
+    "name": "Pascoe Vale Districts Baseball Club",
+    "sport": "Baseball",
+    "suburb": "Pascoe Vale",
+    "members": 568,
+    "activeTravelPct": 24,
+    "climateLevel": "Gold",
+    "joinedYear": 2019
+  },
+  {
+    "id": 38,
+    "name": "Pascoe Vale United Hockey Club",
+    "sport": "Hockey",
+    "suburb": "Pascoe Vale",
+    "members": 103,
+    "activeTravelPct": 43,
+    "climateLevel": "Getting started",
+    "joinedYear": 2026
+  },
+  {
+    "id": 39,
+    "name": "Essendon Little Athletics",
+    "sport": "Athletics",
+    "suburb": "Essendon",
+    "members": 460,
+    "activeTravelPct": 72,
+    "climateLevel": "Gold",
+    "joinedYear": 2021
+  },
+  {
+    "id": 40,
+    "name": "Tullamarine Rovers Soccer Club",
+    "sport": "Soccer",
+    "suburb": "Tullamarine",
+    "members": 67,
+    "activeTravelPct": 69,
+    "climateLevel": "Gold",
+    "joinedYear": 2021
+  },
+  {
+    "id": 41,
+    "name": "Craigieburn Park Tennis Club",
+    "sport": "Tennis",
+    "suburb": "Craigieburn",
+    "members": 320,
+    "activeTravelPct": 24,
+    "climateLevel": "Silver",
+    "joinedYear": 2019
+  },
+  {
+    "id": 42,
+    "name": "Preston Junior Netball Club",
+    "sport": "Netball",
+    "suburb": "Preston",
+    "members": 327,
+    "activeTravelPct": 34,
+    "climateLevel": "Getting started",
+    "joinedYear": 2019
+  },
+  {
+    "id": 43,
+    "name": "Pascoe Vale Junior Rugby League Club",
+    "sport": "Rugby League",
+    "suburb": "Pascoe Vale",
+    "members": 526,
+    "activeTravelPct": 6,
+    "climateLevel": "Silver",
+    "joinedYear": 2022
+  },
+  {
+    "id": 44,
+    "name": "Epping Park Football Club",
+    "sport": "Australian Rules",
+    "suburb": "Epping",
+    "members": 316,
+    "activeTravelPct": 24,
+    "climateLevel": "Bronze",
+    "joinedYear": 2025
+  },
+  {
+    "id": 45,
+    "name": "Tullamarine Rovers Rugby League Club",
+    "sport": "Rugby League",
+    "suburb": "Tullamarine",
+    "members": 135,
+    "activeTravelPct": 49,
+    "climateLevel": "Silver",
+    "joinedYear": 2021
+  },
+  {
+    "id": 46,
+    "name": "Thomastown Baseball Club",
+    "sport": "Baseball",
+    "suburb": "Thomastown",
+    "members": 440,
+    "activeTravelPct": 48,
+    "climateLevel": "Gold",
+    "joinedYear": 2022
+  },
+  {
+    "id": 47,
+    "name": "Greenvale United Baseball Club",
+    "sport": "Baseball",
+    "suburb": "Greenvale",
+    "members": 446,
+    "activeTravelPct": 47,
+    "climateLevel": "Gold",
+    "joinedYear": 2024
+  },
+  {
+    "id": 48,
+    "name": "Tullamarine Rovers Little Athletics",
+    "sport": "Athletics",
+    "suburb": "Tullamarine",
+    "members": 490,
+    "activeTravelPct": 33,
+    "climateLevel": "Silver",
+    "joinedYear": 2025
+  },
+  {
+    "id": 49,
+    "name": "Glenroy Park Soccer Club",
+    "sport": "Soccer",
+    "suburb": "Glenroy",
+    "members": 179,
+    "activeTravelPct": 66,
+    "climateLevel": "Gold",
+    "joinedYear": 2019
+  },
+  {
+    "id": 50,
+    "name": "Essendon Park Baseball Club",
+    "sport": "Baseball",
+    "suburb": "Essendon",
+    "members": 393,
+    "activeTravelPct": 10,
+    "climateLevel": "Getting started",
+    "joinedYear": 2025
+  }
+]
