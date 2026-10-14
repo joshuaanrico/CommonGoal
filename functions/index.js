@@ -6,11 +6,16 @@
 
 const { setGlobalOptions } = require('firebase-functions/v2')
 const { onRequest } = require('firebase-functions/v2/https')
+const { defineSecret } = require('firebase-functions/params')
 const { onDocumentWritten } = require('firebase-functions/v2/firestore')
 const admin = require('firebase-admin')
 
 admin.initializeApp()
 const db = admin.firestore()
+
+// Brevo API key lives in Secret Manager (firebase functions:secrets:set BREVO_API_KEY), never in
+// code or in the browser. Only functions that list it under `secrets` can read it.
+const brevoKey = defineSecret('BREVO_API_KEY')
 
 // Same region as the Firestore database (Melbourne). maxInstances caps cost if something loops.
 setGlobalOptions({ region: 'australia-southeast2', maxInstances: 10 })
@@ -72,8 +77,8 @@ async function requireAdmin(req) {
 }
 
 // Wraps an async handler with CORS, POST-only and consistent JSON errors.
-function postEndpoint(handler) {
-  return onRequest((req, res) => {
+function postEndpoint(handler, options = {}) {
+  return onRequest(options, (req, res) => {
     cors(req, res, async () => {
       if (req.method !== 'POST') {
         res.set('Allow', 'POST').status(405).json({ error: 'Use POST.' })
@@ -87,6 +92,38 @@ function postEndpoint(handler) {
         res.status(status).json({ error: status === 500 ? 'Something went wrong.' : error.message })
       }
     })
+  })
+}
+
+// Sends one email through Brevo's transactional API. The sender must be a verified Brevo sender.
+const SENDER = { name: 'CommonGoal', email: 'joshua.anrico30@gmail.com' }
+
+const escapeHtml = (text) =>
+  text.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
+
+async function sendViaBrevo(payload) {
+  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: { 'api-key': brevoKey.value(), 'content-type': 'application/json', accept: 'application/json' },
+    body: JSON.stringify({ sender: SENDER, ...payload }),
+  })
+  if (!response.ok) {
+    console.error('Brevo error', response.status, await response.text())
+    throw Object.assign(new Error('The email service rejected the message.'), { status: 502 })
+  }
+}
+
+// Allows 5 emails per user in any 10 minute window, so one account cannot be used as a spam cannon.
+async function enforceRateLimit(uid, limit = 5, windowMs = 10 * 60 * 1000) {
+  const ref = db.collection('rateLimits').doc(uid)
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref)
+    const now = Date.now()
+    const recent = (snap.exists ? snap.data().times : []).filter((t) => now - t < windowMs)
+    if (recent.length >= limit) {
+      throw Object.assign(new Error('Too many emails. Wait a few minutes and try again.'), { status: 429 })
+    }
+    tx.set(ref, { times: [...recent, now] })
   })
 }
 
@@ -145,3 +182,66 @@ exports.setUserRole = postEndpoint(async (req) => {
 
   return { uid, role }
 })
+
+// Signed-in members can email a route to a friend, optionally with one attachment (BR D.2).
+// Checks happen here as well as in the browser, because a browser check can be bypassed.
+const ATTACHMENT_TYPES = {
+  'application/pdf': 'pdf',
+  'image/png': 'png',
+  'image/jpeg': 'jpg',
+  'text/plain': 'txt',
+  'text/csv': 'csv',
+}
+const MAX_ATTACHMENT_BYTES = 2 * 1024 * 1024
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+exports.sendEmail = postEndpoint(
+  async (req) => {
+    const caller = await requireUser(req)
+    const { to, subject, message, attachment } = req.body || {}
+
+    if (typeof to !== 'string' || !EMAIL_PATTERN.test(to) || to.length > 254) {
+      throw Object.assign(new Error('Enter a valid recipient email.'), { status: 400 })
+    }
+    if (typeof subject !== 'string' || subject.trim().length < 3 || subject.length > 120) {
+      throw Object.assign(new Error('Subject must be 3 to 120 characters.'), { status: 400 })
+    }
+    if (typeof message !== 'string' || message.trim().length < 5 || message.length > 2000) {
+      throw Object.assign(new Error('Message must be 5 to 2000 characters.'), { status: 400 })
+    }
+
+    const brevoAttachments = []
+    if (attachment) {
+      const { name, type, content } = attachment
+      if (!ATTACHMENT_TYPES[type] || typeof content !== 'string' || typeof name !== 'string') {
+        throw Object.assign(new Error('Attach a PDF, PNG, JPG, TXT or CSV file.'), { status: 400 })
+      }
+      if (Buffer.from(content, 'base64').length > MAX_ATTACHMENT_BYTES) {
+        throw Object.assign(new Error('Attachment must be 2 MB or smaller.'), { status: 400 })
+      }
+      // Keep only safe filename characters and force the extension that matches the real type.
+      const base = name.replace(/\.[^.]*$/, '').replace(/[^\w\- ]/g, '').slice(0, 60) || 'attachment'
+      brevoAttachments.push({ name: `${base}.${ATTACHMENT_TYPES[type]}`, content })
+    }
+
+    await enforceRateLimit(caller.uid)
+
+    await sendViaBrevo({
+      to: [{ email: to }],
+      replyTo: { email: caller.email },
+      subject: subject.trim(),
+      htmlContent: `<p>${escapeHtml(message.trim()).replace(/\n/g, '<br>')}</p><hr><p style="color:#666;font-size:12px">Sent by ${escapeHtml(caller.email)} through CommonGoal.</p>`,
+      ...(brevoAttachments.length ? { attachment: brevoAttachments } : {}),
+    })
+
+    await db.collection('emailLog').add({
+      uid: caller.uid,
+      kind: 'single',
+      recipients: 1,
+      hasAttachment: brevoAttachments.length > 0,
+      at: admin.firestore.FieldValue.serverTimestamp(),
+    })
+    return { sent: true }
+  },
+  { secrets: [brevoKey] },
+)
