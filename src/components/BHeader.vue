@@ -49,6 +49,9 @@
           <!-- Signed in: member links, plus Admin only when the profile says admin -->
           <template v-else>
             <li class="nav-item">
+              <RouterLink to="/share" class="nav-link" active-class="active">Share</RouterLink>
+            </li>
+            <li class="nav-item">
               <RouterLink to="/dashboard" class="nav-link" active-class="active">Dashboard</RouterLink>
             </li>
             <li class="nav-item" v-if="isAdmin">

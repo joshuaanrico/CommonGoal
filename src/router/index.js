@@ -17,6 +17,7 @@ const routes = [
   { path: '/join', name: 'Join', component: JoinView },
   // Lazy loaded: Mapbox is large, so it only downloads when someone opens the map.
   { path: '/map', name: 'Map', component: () => import('../views/MapView.vue') },
+  { path: '/share', name: 'Share', component: () => import('../views/ShareRouteView.vue'), meta: { requiresAuth: true } },
   { path: '/clubs', name: 'Clubs', component: ClubsView },
   { path: '/events', name: 'Events', component: EventsView },
   { path: '/register', name: 'Register', component: RegisterView },
