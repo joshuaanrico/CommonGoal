@@ -4,6 +4,9 @@
 
     <AdminOverview class="mt-4" />
 
+    <!-- Lazy loaded so Chart.js is only downloaded when an admin opens this page. -->
+    <AdminCharts class="mt-5" />
+
     <section class="mt-5">
       <h2 class="h4">Registered users</h2>
       <div class="alert alert-danger" v-if="loadError">{{ loadError }}</div>
@@ -127,7 +130,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, defineAsyncComponent } from 'vue'
 import { collection, getDocs } from 'firebase/firestore'
 import { FilterMatchMode } from '@primevue/core/api'
 import { db } from '../firebase/init'
@@ -135,6 +138,8 @@ import { currentUser } from '../stores/auth'
 import { callFunction } from '../api/functions'
 import ExportButtons from '../components/ExportButtons.vue'
 import AdminOverview from '../components/AdminOverview.vue'
+
+const AdminCharts = defineAsyncComponent(() => import('../components/AdminCharts.vue'))
 import routes from '../assets/json/routes.json'
 
 // Rows for export: the users table's own filtered and sorted rows, so the file matches the screen.
