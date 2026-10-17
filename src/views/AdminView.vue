@@ -27,6 +27,25 @@
         </p>
         <ExportButtons :rows="visibleUsers" :columns="userColumns" name="users" title="CommonGoal registered users" />
       </div>
+      <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm"
+          :disabled="selectedUsers.length === 0"
+          @click="emailDialogOpen = true"
+        >
+          Email selected ({{ selectedUsers.length }})
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm"
+          v-if="selectedUsers.length"
+          @click="selectedUsers = []"
+        >
+          Clear selection
+        </button>
+        <span class="small text-body-secondary">Tick users in the first column, up to 50 at a time.</span>
+      </div>
       <DataTable
         ref="usersTable"
         :value="users"
@@ -40,9 +59,11 @@
         scrollable
         tableStyle="min-width: 40rem"
         dataKey="uid"
+        v-model:selection="selectedUsers"
         :loading="loadingUsers"
       >
         <template #empty>No users match.</template>
+        <Column selectionMode="multiple" headerStyle="width: 3rem" :exportable="false"></Column>
         <Column field="email" header="Email" sortable :showFilterMenu="false">
           <template #filter="{ filterModel, filterCallback }">
             <input
@@ -100,6 +121,8 @@
       </DataTable>
     </section>
 
+    <BulkEmailDialog v-model:visible="emailDialogOpen" :recipients="selectedUsers" @sent="onBulkSent" />
+
     <section class="mt-5">
       <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
         <h2 class="h4 mb-0">Route ratings</h2>
@@ -138,6 +161,7 @@ import { currentUser } from '../stores/auth'
 import { callFunction } from '../api/functions'
 import ExportButtons from '../components/ExportButtons.vue'
 import AdminOverview from '../components/AdminOverview.vue'
+import BulkEmailDialog from '../components/BulkEmailDialog.vue'
 
 const AdminCharts = defineAsyncComponent(() => import('../components/AdminCharts.vue'))
 import routes from '../assets/json/routes.json'
@@ -156,6 +180,16 @@ const ratingColumns = [
   { field: 'average', header: 'Average rating' },
   { field: 'count', header: 'Number of ratings' },
 ]
+
+// Bulk email: the ticked rows in the users table, and the compose dialog.
+const selectedUsers = ref([])
+const emailDialogOpen = ref(false)
+
+const onBulkSent = (result) => {
+  const skipped = result.skipped ? ` (${result.skipped} could not be found)` : ''
+  showResult(true, `Email sent to ${result.sent} user${result.sent === 1 ? '' : 's'}${skipped}.`)
+  selectedUsers.value = []
+}
 
 const busyUid = ref(null)
 const rebuilding = ref(false)
