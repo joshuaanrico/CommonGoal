@@ -52,3 +52,46 @@ body {
     font-size: 3rem;
   }
 }
+
+/* ---- Accessibility (WCAG 2.1 AA) ---- */
+
+/* Skip link: hidden until it gets keyboard focus, then shown at the top left (2.4.1). */
+.skip-link {
+  position: absolute;
+  left: 0.5rem;
+  top: -4rem;
+  z-index: 3000;
+  padding: 0.75rem 1rem;
+  background: #0b5ed7;
+  color: #fff;
+  border-radius: 0.25rem;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  top: 0.5rem;
+}
+
+/* The main area is focused by script after navigation, it should not show a focus ring. */
+main:focus {
+  outline: none;
+}
+
+/* A clear, high contrast focus indicator on everything a keyboard user can reach (2.4.7). */
+:focus-visible {
+  outline: 3px solid #0b5ed7;
+  outline-offset: 2px;
+}
+
+/* Respect the operating system setting for people who get sick from motion (2.3.3). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

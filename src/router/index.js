@@ -1,3 +1,4 @@
+import { nextTick } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import RoutesView from '../views/RoutesView.vue'
@@ -48,6 +49,19 @@ router.beforeEach(async (to) => {
   if (to.meta.roles && !to.meta.roles.includes(userRole.value)) {
     return { name: 'AccessDenied' }
   }
+})
+
+// Single page apps do not reload, so screen readers get no signal that the page changed.
+// After every navigation, set a unique title (WCAG 2.4.2) and move focus to the main area so
+// the new page is announced and keyboard users start at the top of the content (WCAG 2.4.3).
+router.afterEach((to) => {
+  const name = to.name ? String(to.name) : 'CommonGoal'
+  document.title = to.name === 'Home' ? 'CommonGoal' : `${name} | CommonGoal`
+
+  nextTick(() => {
+    const main = document.getElementById('main')
+    if (main) main.focus({ preventScroll: true })
+  })
 })
 
 export default router
