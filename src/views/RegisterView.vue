@@ -8,7 +8,7 @@
           there is no way to register as an admin through this form.
         </p>
 
-        <div class="alert alert-danger" v-if="formError">{{ formError }}</div>
+        <div class="alert alert-danger" role="alert" v-if="formError">{{ formError }}</div>
 
         <form @submit.prevent="submitForm">
           <div class="mb-3">
@@ -17,12 +17,15 @@
               type="text"
               class="form-control"
               id="fullName"
+              :aria-invalid="!!errors.fullName"
+              :aria-describedby="errors.fullName ? 'fullName-error' : undefined"
+              autocomplete="name"
               maxlength="80"
               @blur="() => validateFullName(true)"
               @input="() => validateFullName(false)"
               v-model="formData.fullName"
             />
-            <div class="text-danger" v-if="errors.fullName">{{ errors.fullName }}</div>
+            <div id="fullName-error" class="text-danger" role="alert" v-if="errors.fullName">{{ errors.fullName }}</div>
           </div>
 
           <div class="mb-3">
@@ -31,11 +34,14 @@
               type="email"
               class="form-control"
               id="email"
+              :aria-invalid="!!errors.email"
+              :aria-describedby="errors.email ? 'email-error' : undefined"
+              autocomplete="email"
               @blur="() => validateEmail(true)"
               @input="() => validateEmail(false)"
               v-model="formData.email"
             />
-            <div class="text-danger" v-if="errors.email">{{ errors.email }}</div>
+            <div id="email-error" class="text-danger" role="alert" v-if="errors.email">{{ errors.email }}</div>
           </div>
 
           <div class="row mb-3">
@@ -45,11 +51,14 @@
                 type="password"
                 class="form-control"
                 id="password"
+                :aria-invalid="!!errors.password"
+                :aria-describedby="errors.password ? 'password-error' : undefined"
+                autocomplete="new-password"
                 @blur="() => validatePassword(true)"
                 @input="() => validatePassword(false)"
                 v-model="formData.password"
               />
-              <div class="text-danger" v-if="errors.password">{{ errors.password }}</div>
+              <div id="password-error" class="text-danger" role="alert" v-if="errors.password">{{ errors.password }}</div>
               <div class="form-text">At least 8 characters, with a letter and a number.</div>
             </div>
             <div class="col-6">
@@ -58,11 +67,14 @@
                 type="password"
                 class="form-control"
                 id="confirmPassword"
+                :aria-invalid="!!errors.confirmPassword"
+                :aria-describedby="errors.confirmPassword ? 'confirmPassword-error' : undefined"
+                autocomplete="new-password"
                 @blur="() => validateConfirmPassword(true)"
                 @input="() => validateConfirmPassword(false)"
                 v-model="formData.confirmPassword"
               />
-              <div class="text-danger" v-if="errors.confirmPassword">
+              <div id="confirmPassword-error" class="text-danger" role="alert" v-if="errors.confirmPassword">
                 {{ errors.confirmPassword }}
               </div>
             </div>

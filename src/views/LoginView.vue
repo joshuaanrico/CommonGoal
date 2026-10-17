@@ -4,7 +4,7 @@
       <div class="col-md-6 offset-md-3">
         <h1 class="text-center">Log in</h1>
 
-        <div class="alert alert-danger" v-if="formError">{{ formError }}</div>
+        <div class="alert alert-danger" role="alert" v-if="formError">{{ formError }}</div>
 
         <form @submit.prevent="submitForm">
           <div class="mb-3">
@@ -13,11 +13,14 @@
               type="email"
               class="form-control"
               id="email"
+              :aria-invalid="!!errors.email"
+              :aria-describedby="errors.email ? 'email-error' : undefined"
+              autocomplete="username"
               @blur="() => validateEmail(true)"
               @input="() => validateEmail(false)"
               v-model="formData.email"
             />
-            <div class="text-danger" v-if="errors.email">{{ errors.email }}</div>
+            <div id="email-error" class="text-danger" role="alert" v-if="errors.email">{{ errors.email }}</div>
           </div>
 
           <div class="mb-3">
@@ -26,11 +29,14 @@
               type="password"
               class="form-control"
               id="password"
+              :aria-invalid="!!errors.password"
+              :aria-describedby="errors.password ? 'password-error' : undefined"
+              autocomplete="current-password"
               @blur="() => validatePassword(true)"
               @input="() => validatePassword(false)"
               v-model="formData.password"
             />
-            <div class="text-danger" v-if="errors.password">{{ errors.password }}</div>
+            <div id="password-error" class="text-danger" role="alert" v-if="errors.password">{{ errors.password }}</div>
           </div>
 
           <div class="text-center">

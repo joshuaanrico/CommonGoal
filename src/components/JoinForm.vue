@@ -14,11 +14,14 @@
                 type="text"
                 class="form-control"
                 id="fullName"
+                :aria-invalid="!!errors.fullName"
+                :aria-describedby="errors.fullName ? 'fullName-error' : undefined"
+                autocomplete="name"
                 @blur="() => validateFullName(true)"
                 @input="() => validateFullName(false)"
                 v-model="formData.fullName"
               />
-              <div class="text-danger" v-if="errors.fullName">{{ errors.fullName }}</div>
+              <div id="fullName-error" class="text-danger" role="alert" v-if="errors.fullName">{{ errors.fullName }}</div>
             </div>
             <div class="col-6">
               <label for="email" class="form-label">Email</label>
@@ -26,11 +29,14 @@
                 type="email"
                 class="form-control"
                 id="email"
+                :aria-invalid="!!errors.email"
+                :aria-describedby="errors.email ? 'email-error' : undefined"
+                autocomplete="email"
                 @blur="() => validateEmail(true)"
                 @input="() => validateEmail(false)"
                 v-model="formData.email"
               />
-              <div class="text-danger" v-if="errors.email">{{ errors.email }}</div>
+              <div id="email-error" class="text-danger" role="alert" v-if="errors.email">{{ errors.email }}</div>
             </div>
           </div>
           <div class="row mb-3">
@@ -40,17 +46,22 @@
                 type="number"
                 class="form-control"
                 id="weeklyKm"
+                :aria-invalid="!!errors.weeklyKm"
+                :aria-describedby="errors.weeklyKm ? 'weeklyKm-error' : undefined"
                 @blur="() => validateWeeklyKm(true)"
                 @input="() => validateWeeklyKm(false)"
                 v-model="formData.weeklyKm"
               />
-              <div class="text-danger" v-if="errors.weeklyKm">{{ errors.weeklyKm }}</div>
+              <div id="weeklyKm-error" class="text-danger" role="alert" v-if="errors.weeklyKm">{{ errors.weeklyKm }}</div>
             </div>
             <div class="col-6">
               <label for="suburb" class="form-label">Suburb</label>
               <select
                 class="form-select"
                 id="suburb"
+                :aria-invalid="!!errors.suburb"
+                :aria-describedby="errors.suburb ? 'suburb-error' : undefined"
+                autocomplete="address-level2"
                 @blur="() => validateSuburb(true)"
                 @change="() => validateSuburb(true)"
                 v-model="formData.suburb"
@@ -65,7 +76,7 @@
                 <option value="Roxburgh Park">Roxburgh Park</option>
                 <option value="Westmeadows">Westmeadows</option>
               </select>
-              <div class="text-danger" v-if="errors.suburb">{{ errors.suburb }}</div>
+              <div id="suburb-error" class="text-danger" role="alert" v-if="errors.suburb">{{ errors.suburb }}</div>
             </div>
           </div>
           <div class="text-center">
