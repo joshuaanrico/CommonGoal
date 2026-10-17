@@ -21,7 +21,7 @@ export default defineConfig([
     },
   },
 
-  // Cloud Functions run on Node with CommonJS, not in the browser.
+  // Cloud Functions run on Node (require), not in the browser.
   {
     files: ['functions/**/*.js'],
     languageOptions: {
@@ -34,6 +34,13 @@ export default defineConfig([
 
   js.configs.recommended,
   ...pluginVue.configs['flat/essential'],
+
+  // PrimeVue's Column is a one-word name on purpose.
+  {
+    rules: {
+      'vue/multi-word-component-names': ['error', { ignores: ['Column'] }],
+    },
+  },
 
   ...pluginOxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
 
