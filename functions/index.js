@@ -245,3 +245,65 @@ exports.sendEmail = postEndpoint(
   },
   { secrets: [brevoKey] },
 )
+
+// Admin only. Emails a message to selected registered users (BR F.1 bulk email).
+// The browser sends user ids, never addresses: the server looks the addresses up, so this can
+// only reach people who actually registered and cannot be used to mail strangers. Each person
+// gets their own copy (Brevo messageVersions), so nobody sees anyone else's address, and
+// {{name}} in the text becomes that person's name.
+const MAX_BULK_RECIPIENTS = 50
+
+exports.sendBulkEmail = postEndpoint(
+  async (req) => {
+    const caller = await requireAdmin(req)
+    const { uids, subject, message } = req.body || {}
+
+    if (!Array.isArray(uids) || uids.length === 0 || uids.length > MAX_BULK_RECIPIENTS) {
+      throw Object.assign(new Error(`Pick between 1 and ${MAX_BULK_RECIPIENTS} users.`), { status: 400 })
+    }
+    if (!uids.every((uid) => typeof uid === 'string' && uid.length > 0 && uid.length <= 128)) {
+      throw Object.assign(new Error('Invalid user selection.'), { status: 400 })
+    }
+    if (typeof subject !== 'string' || subject.trim().length < 3 || subject.length > 120) {
+      throw Object.assign(new Error('Subject must be 3 to 120 characters.'), { status: 400 })
+    }
+    if (typeof message !== 'string' || message.trim().length < 5 || message.length > 2000) {
+      throw Object.assign(new Error('Message must be 5 to 2000 characters.'), { status: 400 })
+    }
+
+    // Stricter limit than single email: 3 bulk sends per 10 minutes.
+    await enforceRateLimit(`${caller.uid}_bulk`, 3)
+
+    const refs = [...new Set(uids)].map((uid) => db.collection('users').doc(uid))
+    const snaps = await db.getAll(...refs)
+    const recipients = snaps.filter((snap) => snap.exists && snap.data().email).map((snap) => snap.data())
+    if (recipients.length === 0) {
+      throw Object.assign(new Error('None of the selected users could be found.'), { status: 404 })
+    }
+
+    const body = (name) =>
+      `<p>${escapeHtml(message.trim().replace(/\{\{\s*name\s*\}\}/gi, name)).replace(/\n/g, '<br>')}</p>` +
+      '<hr><p style="color:#666;font-size:12px">You are receiving this because you have a CommonGoal account.</p>'
+    const firstName = (data) => (data.fullName || 'there').split(' ')[0].slice(0, 40)
+
+    await sendViaBrevo({
+      to: [{ email: recipients[0].email }],
+      subject: subject.trim(),
+      htmlContent: body('there'),
+      messageVersions: recipients.map((data) => ({
+        to: [{ email: data.email, name: data.fullName || undefined }],
+        htmlContent: body(firstName(data)),
+      })),
+    })
+
+    await db.collection('emailLog').add({
+      uid: caller.uid,
+      kind: 'bulk',
+      recipients: recipients.length,
+      hasAttachment: false,
+      at: admin.firestore.FieldValue.serverTimestamp(),
+    })
+    return { sent: recipients.length, skipped: new Set(uids).size - recipients.length }
+  },
+  { secrets: [brevoKey] },
+)
