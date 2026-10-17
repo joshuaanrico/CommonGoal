@@ -1,5 +1,4 @@
-// Calls CommonGoal's HTTP Cloud Functions with the signed-in user's ID token, so the server
-// can check who is asking (BR E.1).
+// Calls our Cloud Functions with the user's login token, so the server knows who is asking.
 
 import { auth } from '../firebase/init'
 

@@ -1,7 +1,6 @@
 <template>
-  <!-- Using Bootstrap's Header template, adapted with RouterLink for active-state highlighting -->
-  <!-- https://getbootstrap.com/docs/5.0/examples/headers/ -->
-  <!-- Collapsible nav below 768px: https://getbootstrap.com/docs/5.0/components/navbar/ -->
+  <!-- Bootstrap header, collapses into a menu button under 768px.
+       https://getbootstrap.com/docs/5.0/components/navbar/ -->
   <nav class="navbar navbar-expand-md" aria-label="Main">
     <div class="container justify-content-center">
       <button
@@ -81,8 +80,7 @@ import { currentUser, isAuthenticated, isAdmin, logout } from '../stores/auth'
 
 const router = useRouter()
 
-// Hiding the Admin link is convenience only. The route guard in the router is what
-// actually stops a member reaching /admin by typing the URL.
+// Hiding the Admin link is only for looks. The router guard really blocks /admin.
 const handleLogout = async () => {
   try {
     await logout()

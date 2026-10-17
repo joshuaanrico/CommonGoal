@@ -4,7 +4,7 @@
 
     <AdminOverview class="mt-4" />
 
-    <!-- Lazy loaded so Chart.js is only downloaded when an admin opens this page. -->
+    <!-- Lazy loaded: Chart.js only downloads on this page. -->
     <AdminCharts class="mt-5" />
 
     <section class="mt-5">
@@ -103,7 +103,7 @@
         <Column field="createdAtMs" header="Created" sortable>
           <template #body="{ data }">{{ data.createdLabel }}</template>
         </Column>
-        <!-- Calls the setUserRole Cloud Function, the only place a role can change. -->
+        <!-- Uses the setUserRole function (the only way to change a role). -->
         <Column header="Action">
           <template #body="{ data }">
             <span class="badge text-bg-secondary" v-if="data.uid === currentUser?.uid">You</span>
@@ -166,7 +166,7 @@ import BulkEmailDialog from '../components/BulkEmailDialog.vue'
 const AdminCharts = defineAsyncComponent(() => import('../components/AdminCharts.vue'))
 import routes from '../assets/json/routes.json'
 
-// Rows for export: the users table's own filtered and sorted rows, so the file matches the screen.
+// Rows after filter and sort, for the count and the export.
 const usersTable = ref(null)
 const visibleUsers = computed(() => usersTable.value?.processedData ?? users.value)
 const userColumns = [
@@ -181,7 +181,7 @@ const ratingColumns = [
   { field: 'count', header: 'Number of ratings' },
 ]
 
-// Bulk email: the ticked rows in the users table, and the compose dialog.
+// Bulk email: ticked users and the email popup.
 const selectedUsers = ref([])
 const emailDialogOpen = ref(false)
 

@@ -8,7 +8,7 @@
     <p class="text-body-secondary" v-if="loading" role="status">Loading charts...</p>
 
     <div class="row g-4" v-else>
-      <!-- 1. Average rating per route (bar). Click a bar to open that route's detail. -->
+      <!-- 1. Average rating per route. Click a bar for details. -->
       <div class="col-lg-7">
         <div class="card h-100">
           <div class="card-body">
@@ -26,7 +26,7 @@
         </div>
       </div>
 
-      <!-- 2. Users by role (doughnut). -->
+      <!-- 2. Users by role. -->
       <div class="col-lg-5">
         <div class="card h-100">
           <div class="card-body">
@@ -43,7 +43,7 @@
         </div>
       </div>
 
-      <!-- 3. Ratings over time (line). -->
+      <!-- 3. Ratings per day. -->
       <div class="col-12">
         <div class="card">
           <div class="card-body">
@@ -61,7 +61,7 @@
       </div>
     </div>
 
-    <!-- Clicking a bar shows that route's score breakdown without leaving the page. -->
+    <!-- Shows after clicking a bar. -->
     <div class="card mt-3" v-if="picked" role="status">
       <div class="card-body">
         <h3 class="h6">{{ picked.name }}</h3>
@@ -90,8 +90,7 @@ const GREEN = '#198754'
 const BLUE = '#0d6efd'
 const GREY = '#6c757d'
 
-// Chart.js draws on a canvas, which does not follow the Bootstrap theme, so read the text colour
-// once to keep axis labels readable.
+// Charts draw on a canvas, so give them the page's text colour.
 const textColour = getComputedStyle(document.documentElement).getPropertyValue('--bs-body-color') || '#212529'
 
 const picked = ref(null)

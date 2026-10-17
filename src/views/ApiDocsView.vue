@@ -50,7 +50,7 @@
             <span class="badge" :class="result.ok ? 'text-bg-success' : 'text-bg-danger'">{{ result.status }}</span>
             <span class="ms-2 text-body-secondary">{{ result.ms }} ms</span>
           </p>
-          <!-- {{ }} escapes the text, so whatever the API returns can never run as HTML. -->
+          <!-- {{ }} shows it as plain text, never as HTML. -->
           <pre class="bg-body-secondary p-3 rounded mb-0 api-output" tabindex="0" aria-label="API response">{{ result.body }}</pre>
         </div>
       </div>
@@ -68,8 +68,7 @@
 <script setup>
 import { ref } from 'vue'
 
-// On the live site /api is rewritten to the Cloud Function. The local dev server has no such
-// rewrite, so while developing the page calls the live API instead.
+// Live site: /api goes to the function. Local dev has no rewrite, so use the live API.
 const publicBase = 'https://commongoal-4a77b.web.app/api'
 const apiBase = import.meta.env.DEV ? publicBase : '/api'
 

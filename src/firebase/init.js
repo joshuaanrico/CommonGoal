@@ -1,14 +1,6 @@
-// Firebase initialisation for CommonGoal.
-//
-// Config is read from environment variables, not hard coded. The real values live in
-// .env.local, which is gitignored. See .env.example for the shape and the README for
-// setup steps.
-//
-// A note on the API key, because it looks like a secret and is not one: a Firebase web
-// API key identifies the project, it does not authorise anything. It ships in the client
-// bundle by design. What actually protects the data is firestore.rules plus the
-// authorised domain list in the Firebase console.
-// Reference: https://firebase.google.com/docs/projects/api-keys
+// Firebase setup. Values come from .env.local (not in git).
+// The web API key is not a secret: it only names the project.
+// The data is protected by firestore.rules.
 
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
@@ -23,7 +15,7 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-// Fail loudly during development rather than letting Firebase throw a vague error later.
+// Clear error if .env.local is missing.
 if (!firebaseConfig.apiKey) {
   console.error(
     'Firebase config is missing. Create assignment/commongoal/.env.local from .env.example, then restart the dev server.',

@@ -1,15 +1,12 @@
-// Mapbox web service helpers for CommonGoal (BR E.2).
-//
-// The pk. token is a public token, built to ship in browser code. It is restricted to this
-// site's URLs in the Mapbox dashboard, and is the only Mapbox secret-like value in the app.
-// Reference: https://docs.mapbox.com/api/search/geocoding/ and /api/navigation/directions/
+// Calls to the Mapbox APIs (BR E.2).
+// The pk. token is public on purpose (it is made for browser code).
 
 export const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
 
-// Greenvale, Melbourne. Searches are biased towards here so "Coburg" means the Melbourne one.
+// Greenvale. Search results near here come first.
 export const HOME_CENTRE = [144.89, -37.65]
 
-// Place search (geocoding). Returns up to 5 places in Australia, nearest to Greenvale first.
+// Place search (Geocoding API). Up to 5 places in Australia.
 export async function searchPlaces(query) {
   const text = query.trim()
   if (text.length < 2) return []
@@ -34,8 +31,8 @@ export async function searchPlaces(query) {
   }))
 }
 
-// Route between two points. mode is 'walking' or 'cycling'. Returns distance (km), duration
-// (minutes), the line to draw and the turn by turn steps (trip information).
+// Directions API. mode = 'walking' or 'cycling'.
+// Returns distance (km), time (min), the line to draw and the steps.
 export async function getDirections(from, to, mode) {
   const coords = `${from.lng},${from.lat};${to.lng},${to.lat}`
   const params = new URLSearchParams({

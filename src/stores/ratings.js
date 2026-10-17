@@ -1,12 +1,12 @@
-// Ratings store for CommonGoal (BR C.3, E.1).
+// Ratings store (BR C.3, E.1).
 
 import { ref } from 'vue'
 import { collection, doc, setDoc, onSnapshot, serverTimestamp } from 'firebase/firestore'
 import { db } from '../firebase/init'
 import { sanitiseText } from '../utils/security'
 
-// routeStats/{routeId} holds { average, count }, calculated by the onRatingWritten Cloud
-// Function. The browser only reads it, so the score on every card is the server's number.
+// routeStats = { average, count } per route, made by the onRatingWritten function.
+// The browser only reads it.
 const statsByRoute = ref({})
 
 onSnapshot(collection(db, 'routeStats'), (snapshot) => {
@@ -25,7 +25,7 @@ export function countFor(routeId) {
   return statsByRoute.value[routeId]?.count ?? 0
 }
 
-// Fixed id (uid + routeId) means re-rating just overwrites the same doc, no lookup needed first.
+// Doc id is uid_routeId, so rating again just replaces your old rating.
 export async function saveRating(uid, routeId, score, comment) {
   try {
     await setDoc(doc(db, 'ratings', `${uid}_${routeId}`), {

@@ -17,13 +17,10 @@ app.use(router)
 app.use(PrimeVue, {
   theme: {
     preset: Aura,
-    // The rest of the site (Bootstrap) is always light. Without this PrimeVue follows the
-    // operating system dark mode, which gave dark tables and dialogs with unreadable text on
-    // a light page. 'none' keeps every PrimeVue component light.
+    // Always light. Otherwise PrimeVue follows Windows dark mode and the text is hard to read.
     options: { darkModeSelector: 'none' },
   },
-  // PrimeUI Community License key (free for students). Checked offline in the browser, so it
-  // is not a secret. Without it PrimeVue shows an "Invalid PrimeUI License" badge.
+  // Free student license key. Removes the red "Invalid PrimeUI License" badge.
   license: import.meta.env.VITE_PRIMEUI_LICENSE,
 })
 

@@ -1,9 +1,6 @@
-// Live admin data for the dashboard and charts (BR F.1).
-//
-// Opens one onSnapshot listener per collection, so every number and chart updates the moment a
-// user registers, rates a route or an email is sent, with no refresh. The listeners are closed
-// when the page is left, otherwise they would keep reading (and billing) in the background.
-// Only admins can read users and emailLog, the Firestore rules enforce that on the server.
+// Live data for the admin dashboard and charts (BR F.1).
+// onSnapshot = updates by itself when the data changes, no refresh.
+// Listeners are closed when you leave the page, so they stop reading (and costing) in the background.
 
 import { ref, onMounted, onUnmounted } from 'vue'
 import { collection, onSnapshot } from 'firebase/firestore'
@@ -24,7 +21,7 @@ export function useAdminData() {
     if (waitingFor <= 0) loading.value = false
   }
 
-  // Maps each Firestore doc to a plain object with timestamps as milliseconds, easy to chart.
+  // Turn each doc into a simple object. Dates become numbers (ms) so they are easy to chart.
   const listen = (name, target, toRow) => {
     let first = true
     const unsubscribe = onSnapshot(

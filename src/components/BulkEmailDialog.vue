@@ -75,7 +75,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['sent'])
 
-// v-model:visible from the parent decides when the dialog is open.
+// The parent opens and closes the popup with v-model:visible.
 const open = defineModel('visible', { type: Boolean, default: false })
 
 const subject = ref('')
@@ -84,7 +84,7 @@ const errors = ref({ subject: null, message: null })
 const error = ref(null)
 const sending = ref(false)
 
-// Start with a clean form every time the dialog is opened.
+// Empty form every time it opens.
 watch(open, (isOpen) => {
   if (isOpen) {
     subject.value = ''

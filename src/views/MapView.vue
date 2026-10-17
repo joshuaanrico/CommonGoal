@@ -12,7 +12,7 @@
 
     <div class="row g-4">
       <div class="col-lg-4">
-        <!-- Feature 1: place search (geocoding) -->
+        <!-- Feature 1: place search -->
         <form @submit.prevent="runSearch" role="search" aria-label="Search for a place">
           <label for="placeSearch" class="form-label">Search for a place</label>
           <div class="input-group">
@@ -42,7 +42,7 @@
         </ul>
         <p class="small text-body-secondary mt-2" v-else-if="searched">No places found. Try another name.</p>
 
-        <!-- Feature 2: directions and trip information -->
+        <!-- Feature 2: directions and trip info -->
         <h2 class="h5 mt-4">Get directions</h2>
         <div class="mb-2">
           <label for="routePick" class="form-label">To route</label>
@@ -88,7 +88,7 @@
       </div>
 
       <div class="col-lg-8">
-        <!-- A map is a picture to a screen reader, so the same routes are listed as text below. -->
+        <!-- Screen readers can't see a map, so the routes are also listed as text. -->
         <div ref="mapEl" class="route-map" role="region" aria-label="Map of active travel routes, a list of the same routes follows"></div>
 
         <h2 class="h5 mt-4">Routes on the map</h2>
@@ -125,7 +125,7 @@ const mode = ref('walking')
 const trip = ref(null)
 const showAllSteps = ref(false)
 
-// Long trips can have 40+ turns, so show the first few and let people expand the rest.
+// Long trips have 40+ steps, so show 8 first.
 const STEP_PREVIEW = 8
 const visibleSteps = computed(() =>
   showAllSteps.value ? trip.value.steps : trip.value.steps.slice(0, STEP_PREVIEW),
@@ -135,7 +135,7 @@ let map = null
 let searchMarker = null
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-// Honour the "reduce motion" setting by jumping instead of flying.
+// If the user turned on "reduce motion", jump instead of fly.
 const moveTo = (lng, lat, zoom = 14) => {
   if (!map) return
   if (prefersReducedMotion) map.jumpTo({ center: [lng, lat], zoom })
@@ -149,7 +149,7 @@ onMounted(() => {
   map.addControl(new mapboxgl.NavigationControl(), 'top-right')
 
   routes.forEach((route) => {
-    // Popup text is built with textContent so route data can never inject HTML.
+    // textContent (not HTML) so data can never run as code.
     const box = document.createElement('div')
     const title = document.createElement('strong')
     title.textContent = route.name
@@ -185,7 +185,7 @@ const runSearch = async () => {
   }
 }
 
-// Picking a result drops a pin, flies there and uses it as the start point for directions.
+// Pick a result: drop a red pin and use it as the start point.
 const choosePlace = (place) => {
   searchMarker?.remove()
   searchMarker = new mapboxgl.Marker({ color: '#dc3545' }).setLngLat([place.lng, place.lat]).addTo(map)
@@ -214,8 +214,7 @@ const useMyLocation = () => {
   )
 }
 
-// If a trip is showing and the person changes route or walking/riding, fetch the new one,
-// otherwise the distance and time on screen would belong to the old choice.
+// Changing route or walking/riding gets new directions, so the numbers stay correct.
 watch([routeId, mode], () => {
   if (trip.value && origin.value) runDirections()
 })

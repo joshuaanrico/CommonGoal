@@ -120,8 +120,7 @@ const sent = ref(false)
 const lastRecipient = ref('')
 const serverError = ref('')
 
-// Same blur-then-input pattern as the A1.2 join form: show an error once the person leaves the
-// field, then keep it up to date as they type.
+// Same as the Join form: show the error when you leave the field, then update it as you type.
 const validateTo = (blur) => {
   if (!EMAIL_PATTERN.test(form.to.trim())) {
     if (blur) errors.to = 'Enter a valid email address.'
@@ -176,7 +175,7 @@ const onFileChange = (event) => {
   file.value = chosen
 }
 
-// The function receives the file as base64 text inside the JSON body.
+// Turn the file into base64 text so it can go inside the JSON.
 const toBase64 = (blob) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader()

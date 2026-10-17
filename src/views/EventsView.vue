@@ -29,7 +29,7 @@
       <ExportButtons :rows="visibleRows" :columns="exportColumns" name="events" title="CommonGoal upcoming events" />
     </div>
 
-    <!-- BR D.3: second interactive table, same features as Clubs. -->
+    <!-- BR D.3: second table, same features as Clubs. -->
     <DataTable
       ref="tableRef"
       :value="rows"
@@ -90,7 +90,7 @@
         </template>
       </Column>
 
-      <!-- ISO date strings sort and compare correctly as text, the body shows the friendly format. -->
+      <!-- Dates are stored as 2026-10-18 so they sort correctly. Shown in a friendly format. -->
       <Column field="date" header="Date" sortable :showFilterMenu="false">
         <template #body="{ data }">{{ formatDate(data.date) }}</template>
         <template #filter="{ filterModel, filterCallback }">
@@ -147,7 +147,7 @@ import { FilterMatchMode } from '@primevue/core/api'
 import events from '../assets/json/events.json'
 import ExportButtons from '../components/ExportButtons.vue'
 
-// Derived columns are computed once so they can be sorted and filtered like real fields.
+// Add the extra columns once, so they can be sorted and filtered too.
 const rows = events.map((event) => ({
   ...event,
   spotsLeft: event.capacity - event.booked,
@@ -178,7 +178,7 @@ const emptyFilters = () => ({
 
 const filters = ref(emptyFilters())
 
-// The table's own filtered and sorted rows (all pages), used for the count and the export.
+// Rows after filter and sort (all pages). Used for the count and the export.
 const tableRef = ref(null)
 const visibleRows = computed(() => tableRef.value?.processedData ?? rows)
 

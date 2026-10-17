@@ -29,7 +29,7 @@
       <ExportButtons :rows="visibleRows" :columns="exportColumns" name="clubs" title="CommonGoal partner clubs" />
     </div>
 
-    <!-- BR D.3: sort on every column, global search, a filter per column, 10 rows per page. -->
+    <!-- BR D.3: sort, search all, filter per column, 10 rows per page. -->
     <DataTable
       ref="tableRef"
       :value="clubs"
@@ -158,8 +158,7 @@ const emptyFilters = () => ({
 
 const filters = ref(emptyFilters())
 
-// The table's own filtered and sorted rows (all pages), so the count line and the export always
-// match what the person sees on screen.
+// Rows after filter and sort (all pages). Used for the count and the export.
 const tableRef = ref(null)
 const visibleRows = computed(() => tableRef.value?.processedData ?? clubs)
 

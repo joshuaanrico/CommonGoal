@@ -35,7 +35,7 @@ const route = useRoute()
 const busy = ref(false)
 const error = ref(null)
 
-// Shared by the login and register pages, so external sign-in behaves the same on both.
+// Used on both the Login and Register pages.
 const handleClick = async () => {
   error.value = null
   busy.value = true

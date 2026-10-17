@@ -1,12 +1,9 @@
-// Table export helpers for CommonGoal (BR E.4).
-//
-// Both functions take the rows the person is currently looking at (after filters and sort),
-// plus a list of columns { field, header }, so the file always matches the screen.
+// Export table rows to CSV or PDF (BR E.4).
+// rows = what the user sees after filter and sort. columns = [{ field, header }].
 
 const todayStamp = () => new Date().toISOString().slice(0, 10)
 
-// Stops spreadsheet formula injection: Excel and Sheets run cells that start with = + - @.
-// A leading apostrophe makes them plain text.
+// Excel runs cells that start with = + - @ as formulas. Adding ' in front makes them plain text.
 const neutraliseFormula = (text) => (/^[=+\-@\t\r]/.test(text) ? `'${text}` : text)
 
 const cellText = (value) => {
@@ -14,9 +11,7 @@ const cellText = (value) => {
   return neutraliseFormula(String(value))
 }
 
-// CSV rules (RFC 4180): wrap in quotes when the cell has a comma, quote or newline, and double
-// any quotes inside. The BOM at the start tells Excel the file is UTF-8, so names with accents
-// do not turn into garbage.
+// Put quotes around a cell that has a comma, quote or new line, and double any quotes inside.
 const csvCell = (value) => {
   const text = cellText(value)
   return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text
@@ -38,11 +33,12 @@ export function exportCsv(rows, columns, name) {
     columns.map((column) => csvCell(column.header)).join(','),
     ...rows.map((row) => columns.map((column) => csvCell(row[column.field])).join(',')),
   ]
-  const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' })
+  // \ufeff at the start tells Excel the file is UTF-8.
+  const blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' })
   download(blob, `commongoal-${name}-${todayStamp()}.csv`)
 }
 
-// jsPDF is large, so it is only downloaded the first time someone clicks Export PDF.
+// jsPDF is big, so it only downloads when someone clicks Export PDF.
 export async function exportPdf(rows, columns, name, title) {
   const [{ jsPDF }, { default: autoTable }] = await Promise.all([import('jspdf'), import('jspdf-autotable')])
 
