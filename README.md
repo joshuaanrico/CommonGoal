@@ -1,7 +1,10 @@
 # CommonGoal
 
-A1.2 (V1) and A1.3 (V2) Basic Application Development for FIT5032. Vue 3, Vue
-Router, Bootstrap 5, PrimeVue, Firebase Auth, Firestore.
+A1.2 (V1), A1.3 (V2) and A3 (V3) application development for FIT5032. Vue 3, Vue
+Router, Bootstrap 5, PrimeVue, Firebase (Auth, Firestore, Hosting, Cloud
+Functions), Mapbox, Brevo.
+
+**Live site:** https://commongoal-4a77b.web.app
 
 CommonGoal is a fictional Melbourne not-for-profit that helps community sports
 clubs go climate-ready and makes active travel (walking, riding, scooting) the
@@ -24,6 +27,101 @@ default way families reach training, games and school. Based in Greenvale VIC
 **BR A.1** (framework, structure, routing) applies across the whole app: Vue 3
 Composition API, Vue Router, and components split under `src/components/` and
 `src/views/`.
+
+## A3 additions (BR D, E, F)
+
+| BR | Feature | Where | How it works |
+|---|---|---|---|
+| **D.1** | External sign-in | `/login`, `/register`, `src/stores/auth.js`, `GoogleSignInButton.vue` | Firebase Auth with Email/Password **and Google**. A first Google sign-in creates a `member` profile, same Firestore rules apply. HTTPS comes from Firebase Hosting |
+| **D.2** | Email with attachment | `/share`, `src/views/ShareRouteView.vue`, function `sendEmail` | Browser sends the form and the file (base64) to a Cloud Function. It checks the Firebase ID token, validates input, allows PDF, PNG, JPG, TXT, CSV up to 2 MB, rate limits to 5 per 10 min, then calls the Brevo REST API. The Brevo key is in Google Secret Manager, never in the browser |
+| **D.3** | Interactive tables | `/clubs` (50 rows), `/events` (40 rows), `/admin` | PrimeVue `DataTable`: sort on every column, global search, a filter under each column, 10 rows per page |
+| **D.4** | Deployed | https://commongoal-4a77b.web.app | Firebase Hosting, SPA rewrite so deep links work, security headers, long cache for hashed assets |
+| **E.1** | Cloud Functions | `functions/index.js` | `onRatingWritten` (Firestore trigger, keeps `routeStats` correct), `rebuildRouteStats`, `setUserRole` (admin only, audit log), `sendEmail`, `sendBulkEmail`, `api`. Region australia-southeast2 |
+| **E.2** | Map | `/map`, `src/utils/mapbox.js` | Mapbox GL JS map with a pin per route, place search (Geocoding API), walking or riding directions with distance, time and turn by turn steps (Directions API), "use my location" |
+| **E.3** | Accessibility (WCAG 2.1 AA) | whole app | Skip link, page titles and focus moved on navigation, labelled inputs with `aria-invalid` and `aria-describedby`, errors announced with `role="alert"`, `autocomplete` on forms, labelled rating buttons, visible focus ring, reduced motion respected, text alternative for the map and charts. Lighthouse accessibility 100 on every page |
+| **E.4** | Export | Clubs, Events and Admin tables | CSV (UTF-8, Excel safe, formula injection safe) and PDF (jsPDF). Exports exactly the rows you see after filtering and sorting |
+| **F.1** | Admin dashboard | top of `/admin` | Live counts: users, members and admins, new this week, ratings, average, emails sent, most rated route |
+| **F.1** | Interactive charts | `/admin`, `AdminCharts.vue` | Chart.js from live Firestore data: average rating per route (click a bar for the breakdown), users by role, ratings per day |
+| **F.1** | Bulk email | `/admin`, `BulkEmailDialog.vue`, function `sendBulkEmail` | Admin ticks users, writes one message with `{{name}}`. Server checks the caller is an admin, looks up addresses itself, sends each person their own copy |
+| **F.1** | Public REST API | `/api-docs`, `functions/api.js` | Read only JSON API at `/api/routes`, `/api/routes/:id`, `/api/routes/:id/stats`, `/api/clubs`, `/api/clubs/:id`. Paging, filters, 400/404/405 errors, CORS, caching, "Try it" docs page |
+
+### Cloud Functions
+
+| Function | Trigger | Who can call it |
+|---|---|---|
+| `onRatingWritten` | Firestore `ratings/{id}` written | Firestore only |
+| `rebuildRouteStats` | HTTP POST | admin |
+| `setUserRole` | HTTP POST | admin (cannot change own role) |
+| `sendEmail` | HTTP POST | any signed in user |
+| `sendBulkEmail` | HTTP POST | admin |
+| `api` | HTTP GET | anyone (public data only) |
+
+Every protected function checks `Authorization: Bearer <Firebase ID token>` with
+the Admin SDK (`verifyIdToken`), then reads the caller's role from `users/{uid}`.
+No token or a bad token gives 401, a non admin gives 403.
+
+### Test accounts
+
+- Admin: `admin@commongoal.org` / `[password removed]`
+- Member: register at `/register`, or use **Continue with Google**
+
+### Setup (local)
+
+```sh
+cd assignment/commongoal
+npm install
+npm run dev
+```
+
+Needs `.env.local` (see `.env.example`):
+
+| Variable | What it is |
+|---|---|
+| `VITE_FIREBASE_*` | Firebase web config (public by design, protected by the Firestore rules) |
+| `VITE_MAPBOX_TOKEN` | Mapbox public token (`pk.`), restrict it to your site URLs |
+| `VITE_PRIMEUI_LICENSE` | PrimeUI Community license key (free for students) |
+| `VITE_FUNCTIONS_BASE_URL` | Optional, base URL of the Cloud Functions |
+
+Cloud Functions (needs the Firebase CLI and the Blaze plan):
+
+```sh
+cd functions && npm install && cd ..
+firebase functions:secrets:set BREVO_API_KEY   # paste the Brevo API key when asked
+firebase deploy --only functions
+```
+
+Deploy the site:
+
+```sh
+npm run build
+firebase deploy --only hosting
+```
+
+### Security notes (A3)
+
+- The Brevo API key lives in Google Secret Manager. Only `sendEmail` and `sendBulkEmail` can read it.
+- Roles can change only through the `setUserRole` function. The Firestore rules block any client from writing a role.
+- `routeStats` can only be written by the `onRatingWritten` function, so a rating average cannot be faked.
+- Every function validates its input again on the server, because browser checks can be bypassed.
+- Email rate limits: 5 single emails and 3 bulk sends per user per 10 minutes.
+- The public API is GET only and exposes no personal data.
+- CSV export neutralises cells starting with `=`, `+`, `-` or `@`.
+
+### Mock data
+
+`clubs.json` and `events.json` are generated test data (Mockaroo style), not real clubs or events.
+
+### A3 references
+
+- [Firebase Hosting](https://firebase.google.com/docs/hosting), [Cloud Functions](https://firebase.google.com/docs/functions), [Secret Manager with Functions](https://firebase.google.com/docs/functions/config-env)
+- [Firebase Auth, Google sign-in](https://firebase.google.com/docs/auth/web/google-signin)
+- [Mapbox GL JS](https://docs.mapbox.com/mapbox-gl-js/), [Geocoding API](https://docs.mapbox.com/api/search/geocoding/), [Directions API](https://docs.mapbox.com/api/navigation/directions/)
+- [Brevo transactional email API](https://developers.brevo.com/reference/sendtransacemail)
+- [PrimeVue DataTable](https://primevue.org/datatable/), [Chart](https://primevue.org/chart/), [Dialog](https://primevue.org/dialog/)
+- [Chart.js](https://www.chartjs.org/docs/), [jsPDF](https://github.com/parallax/jsPDF), [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable)
+- [WCAG 2.1 quick reference](https://www.w3.org/WAI/WCAG21/quickref/)
+- [Express](https://expressjs.com/), [Mockaroo](https://www.mockaroo.com/) (test data approach)
+- FIT5032 Week 8 to 12 studios (Firestore, Cloud Functions, deployment)
 
 ## Roles and access
 
