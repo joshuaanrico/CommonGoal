@@ -1,7 +1,5 @@
-// Firestore security rules for CommonGoal (BR C.4).
-// This is the server side check. The router guard in the app is just for
-// user experience, someone editing client code can skip it, so the real
-// rules live here.
+// Firestore security rules (BR C.4).
+// This is the real security. Router guards in the app are only for user experience.
 
 rules_version = '2';
 
@@ -21,75 +19,66 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // User profiles, and where the role field lives.
+    // User profiles (this is where the role is stored).
     match /users/{uid} {
-
-      // Read your own profile. Admins can read anyone's.
+      // Read your own profile. Admins can read all.
       allow get: if isOwner(uid) || isAdmin();
-
-      // Only admins can list every user, this backs the admin console table.
       allow list: if isAdmin();
 
-      // Signing up always creates a member, never an admin. Admins are added
-      // by hand in the Firebase console. hasOnly() also blocks extra fields.
+      // Sign up always makes a member. No extra fields allowed.
       allow create: if isOwner(uid)
                     && request.resource.data.role == 'member'
                     && request.resource.data.keys().hasOnly(['email', 'fullName', 'role', 'createdAt']);
 
-      // Only admins can edit or delete a profile, and even they cannot change a role from the
-      // browser. Roles change only through the setUserRole Cloud Function, which logs it.
+      // Admins can edit a profile but not the role. Roles change only in the setUserRole function.
       allow update: if isAdmin()
                     && request.resource.data.role == resource.data.role;
       allow delete: if isAdmin();
     }
 
-    // Per-route average and count, written only by the onRatingWritten Cloud Function
-    // (the Admin SDK skips these rules). Public read, no client writes at all.
+    // Average and count per route. Only the onRatingWritten function writes it.
     match /routeStats/{routeId} {
       allow read: if true;
       allow write: if false;
     }
 
-    // One row per email the sendEmail and bulk email functions deliver. Admins read it for the
-    // dashboard. Only the Cloud Functions write it (the Admin SDK skips these rules).
+    // Log of sent emails, for the admin dashboard. Only functions write it.
     match /emailLog/{logId} {
       allow read: if isAdmin();
       allow write: if false;
     }
 
-    // Per-user email rate limit counters. Nobody can touch these from a browser, only the
-    // sendEmail function, so there is deliberately no rule here and the default deny applies.
-
-    // Audit log of role changes, written by setUserRole. Admins can read it.
+    // Log of role changes. Only the setUserRole function writes it.
     match /roleChanges/{changeId} {
       allow read: if isAdmin();
       allow write: if false;
     }
 
-    // Route ratings. Doc id is {uid}_{routeId}, so one user can only ever
-    // have one rating per route.
-    match /ratings/{ratingId} {
+    // rateLimits has no rule, so browsers cannot read or write it at all.
 
-      // Scores are public, so anyone can see the average, signed in or not.
+    // Ratings. Doc id is {uid}_{routeId}, so one rating per user per route.
+    match /ratings/{ratingId} {
+      // Public, so everyone can see scores.
       allow read: if true;
 
       allow create, update: if isSignedIn()
-                    // You can only write a rating under your own uid.
+                    // Only these fields.
+                    && request.resource.data.keys().hasOnly(['uid', 'routeId', 'score', 'comment', 'updatedAt'])
+                    // Only under your own uid, and the doc id must match.
                     && request.auth.uid == request.resource.data.uid
-                    // Doc id must match owner and route.
+                    && request.resource.data.routeId is int
                     && ratingId == request.auth.uid + '_' + string(request.resource.data.routeId)
-                    // Score must be a whole number 1 to 5.
+                    // Score 1 to 5.
                     && request.resource.data.score is int
                     && request.resource.data.score >= 1
                     && request.resource.data.score <= 5
-                    // Comment capped at 300 characters.
+                    // Comment up to 300 characters.
                     && request.resource.data.comment is string
                     && request.resource.data.comment.size() <= 300;
 
-      // Only admins can delete a rating.
       allow delete: if isAdmin();
     }
 
-    // Everything else is denied by default.
+    // Everything else is blocked by default.
   }
 }
