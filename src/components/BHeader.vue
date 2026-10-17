@@ -2,7 +2,7 @@
   <!-- Using Bootstrap's Header template, adapted with RouterLink for active-state highlighting -->
   <!-- https://getbootstrap.com/docs/5.0/examples/headers/ -->
   <!-- Collapsible nav below 768px: https://getbootstrap.com/docs/5.0/components/navbar/ -->
-  <nav class="navbar navbar-expand-md">
+  <nav class="navbar navbar-expand-md" aria-label="Main">
     <div class="container justify-content-center">
       <button
         class="navbar-toggler"

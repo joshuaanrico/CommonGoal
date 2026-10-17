@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <p class="text-muted">Showing {{ filteredRoutes.length }} of {{ routes.length }} routes</p>
+    <p class="text-muted" aria-live="polite">Showing {{ filteredRoutes.length }} of {{ routes.length }} routes</p>
 
     <div class="row" v-if="filteredRoutes.length">
       <div class="col-lg-4 col-md-6 col-12 mb-4" v-for="route in filteredRoutes" :key="route.id">
@@ -42,7 +42,7 @@
               <li>Shade: {{ route.hasShade ? 'Yes' : 'No' }}</li>
               <li>Step-free: {{ route.stepFree ? 'Yes' : 'No' }}</li>
             </ul>
-            <RouteRating :route-id="route.id" />
+            <RouteRating :route-id="route.id" :route-name="route.name" />
           </div>
         </div>
       </div>
