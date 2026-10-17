@@ -40,6 +40,8 @@
           </div>
         </form>
 
+        <GoogleSignInButton />
+
         <p class="text-center mt-3">
           No account yet? <RouterLink to="/register">Register</RouterLink>
         </p>
@@ -49,6 +51,7 @@
 </template>
 
 <script setup>
+import GoogleSignInButton from '../components/GoogleSignInButton.vue'
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { login } from '../stores/auth'
