@@ -1,8 +1,6 @@
 // Cloud Functions for CommonGoal (BR E.1).
-//
-// These run on Google's servers with the Admin SDK, which skips the Firestore rules. That is
-// the point: they do the jobs a browser must never be trusted with, like working out the
-// official rating average or changing someone's role.
+// They run on Google's server with the Admin SDK, which skips the Firestore rules,
+// so each one checks who is calling before doing anything.
 
 const { setGlobalOptions } = require('firebase-functions/v2')
 const { onRequest } = require('firebase-functions/v2/https')
@@ -13,14 +11,13 @@ const admin = require('firebase-admin')
 admin.initializeApp()
 const db = admin.firestore()
 
-// Brevo API key lives in Secret Manager (firebase functions:secrets:set BREVO_API_KEY), never in
-// code or in the browser. Only functions that list it under `secrets` can read it.
+// Brevo key is stored in Secret Manager, not in the code.
 const brevoKey = defineSecret('BREVO_API_KEY')
 
-// Same region as the Firestore database (Melbourne). maxInstances caps cost if something loops.
+// Melbourne, same as Firestore. Max 10 copies running, to cap cost.
 setGlobalOptions({ region: 'australia-southeast2', maxInstances: 10 })
 
-// Only our own sites may call the HTTP functions from a browser.
+// Only our own websites can call these functions from a browser.
 const cors = require('cors')({
   origin: [
     'http://localhost:5173',
@@ -31,7 +28,10 @@ const cors = require('cors')({
 
 // ---------- helpers ----------
 
-// Recalculates the average and count for one route from every rating it has.
+// Makes an error that carries an HTTP status code.
+const httpError = (status, message) => Object.assign(new Error(message), { status })
+
+// Works out the average and count for one route and saves it in routeStats.
 async function recomputeRouteStats(routeId) {
   const snapshot = await db.collection('ratings').where('routeId', '==', routeId).get()
   const statsRef = db.collection('routeStats').doc(String(routeId))
@@ -52,18 +52,17 @@ async function recomputeRouteStats(routeId) {
   return stats
 }
 
-// Checks the Firebase ID token sent as "Authorization: Bearer <token>" and loads the caller's
-// profile. Throws an error carrying the HTTP status to send back.
+// Checks the login token ("Authorization: Bearer <token>") and loads the user's role.
 async function requireUser(req) {
   const header = req.get('Authorization') || ''
   const match = header.match(/^Bearer (.+)$/)
-  if (!match) throw Object.assign(new Error('Sign in first.'), { status: 401 })
+  if (!match) throw httpError(401, 'Sign in first.')
 
   let decoded
   try {
     decoded = await admin.auth().verifyIdToken(match[1])
   } catch {
-    throw Object.assign(new Error('Session expired, sign in again.'), { status: 401 })
+    throw httpError(401, 'Session expired, sign in again.')
   }
 
   const profile = await db.collection('users').doc(decoded.uid).get()
@@ -72,11 +71,11 @@ async function requireUser(req) {
 
 async function requireAdmin(req) {
   const caller = await requireUser(req)
-  if (caller.role !== 'admin') throw Object.assign(new Error('Admins only.'), { status: 403 })
+  if (caller.role !== 'admin') throw httpError(403, 'Admins only.')
   return caller
 }
 
-// Wraps an async handler with CORS, POST-only and consistent JSON errors.
+// Shared setup for every POST function: CORS, POST only, and JSON errors.
 function postEndpoint(handler, options = {}) {
   return onRequest(options, (req, res) => {
     cors(req, res, async () => {
@@ -89,15 +88,17 @@ function postEndpoint(handler, options = {}) {
       } catch (error) {
         const status = error.status || 500
         if (status === 500) console.error(error)
+        // Never send the real server error to the browser.
         res.status(status).json({ error: status === 500 ? 'Something went wrong.' : error.message })
       }
     })
   })
 }
 
-// Sends one email through Brevo's transactional API. The sender must be a verified Brevo sender.
+// Sender must be verified in Brevo.
 const SENDER = { name: 'CommonGoal', email: 'joshua.anrico30@gmail.com' }
 
+// Turns < > & " ' into safe text so a message cannot add HTML to the email.
 const escapeHtml = (text) =>
   text.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
 
@@ -109,29 +110,35 @@ async function sendViaBrevo(payload) {
   })
   if (!response.ok) {
     console.error('Brevo error', response.status, await response.text())
-    throw Object.assign(new Error('The email service rejected the message.'), { status: 502 })
+    throw httpError(502, 'The email service rejected the message.')
   }
 }
 
-// Allows 5 emails per user in any 10 minute window, so one account cannot be used as a spam cannon.
-async function enforceRateLimit(uid, limit = 5, windowMs = 10 * 60 * 1000) {
-  const ref = db.collection('rateLimits').doc(uid)
+// Stops spam: max `limit` sends per user in 10 minutes. A transaction so two clicks at once count properly.
+async function enforceRateLimit(key, limit = 5, windowMs = 10 * 60 * 1000) {
+  const ref = db.collection('rateLimits').doc(key)
   await db.runTransaction(async (tx) => {
     const snap = await tx.get(ref)
     const now = Date.now()
     const recent = (snap.exists ? snap.data().times : []).filter((t) => now - t < windowMs)
-    if (recent.length >= limit) {
-      throw Object.assign(new Error('Too many emails. Wait a few minutes and try again.'), { status: 429 })
-    }
+    if (recent.length >= limit) throw httpError(429, 'Too many emails. Wait a few minutes and try again.')
     tx.set(ref, { times: [...recent, now] })
   })
 }
 
+// Same checks for single and bulk email.
+function checkSubjectAndMessage(subject, message) {
+  if (typeof subject !== 'string' || subject.trim().length < 3 || subject.length > 120) {
+    throw httpError(400, 'Subject must be 3 to 120 characters.')
+  }
+  if (typeof message !== 'string' || message.trim().length < 5 || message.length > 2000) {
+    throw httpError(400, 'Message must be 5 to 2000 characters.')
+  }
+}
+
 // ---------- functions ----------
 
-// Firestore trigger: any time a rating is created, changed or deleted, rebuild that route's
-// stats. Clients can read routeStats but the rules stop them writing it, so the number shown
-// on every card is one the server calculated, not one a user could fake.
+// Runs by itself when a rating is added, changed or deleted. Updates that route's stats.
 exports.onRatingWritten = onDocumentWritten('ratings/{ratingId}', async (event) => {
   const after = event.data?.after?.data()
   const before = event.data?.before?.data()
@@ -142,7 +149,7 @@ exports.onRatingWritten = onDocumentWritten('ratings/{ratingId}', async (event) 
   console.log(`routeStats/${routeId} updated`, { count: stats.count, average: stats.average })
 })
 
-// Admin only. Rebuilds stats for every route, for ratings written before the trigger existed.
+// Admin only. Recalculates every route (for old ratings or if stats get out of sync).
 exports.rebuildRouteStats = postEndpoint(async (req) => {
   await requireAdmin(req)
   const snapshot = await db.collection('ratings').get()
@@ -151,25 +158,18 @@ exports.rebuildRouteStats = postEndpoint(async (req) => {
   return { rebuilt: results.length }
 })
 
-// Admin only. Promotes a member to admin or back. The Firestore rules forbid any client from
-// writing a role, so this server check is the only door, and every change is logged.
+// Admin only. The only way to change a role. Every change is saved in roleChanges.
 exports.setUserRole = postEndpoint(async (req) => {
   const caller = await requireAdmin(req)
   const { uid, role } = req.body || {}
 
-  if (typeof uid !== 'string' || uid.length === 0 || uid.length > 128) {
-    throw Object.assign(new Error('Missing user id.'), { status: 400 })
-  }
-  if (!['member', 'admin'].includes(role)) {
-    throw Object.assign(new Error('Role must be member or admin.'), { status: 400 })
-  }
-  if (uid === caller.uid) {
-    throw Object.assign(new Error('You cannot change your own role.'), { status: 400 })
-  }
+  if (typeof uid !== 'string' || uid.length === 0 || uid.length > 128) throw httpError(400, 'Missing user id.')
+  if (!['member', 'admin'].includes(role)) throw httpError(400, 'Role must be member or admin.')
+  if (uid === caller.uid) throw httpError(400, 'You cannot change your own role.')
 
   const userRef = db.collection('users').doc(uid)
   const userSnap = await userRef.get()
-  if (!userSnap.exists) throw Object.assign(new Error('User not found.'), { status: 404 })
+  if (!userSnap.exists) throw httpError(404, 'User not found.')
 
   await userRef.update({ role })
   await db.collection('roleChanges').add({
@@ -183,8 +183,7 @@ exports.setUserRole = postEndpoint(async (req) => {
   return { uid, role }
 })
 
-// Signed-in members can email a route to a friend, optionally with one attachment (BR D.2).
-// Checks happen here as well as in the browser, because a browser check can be bypassed.
+// Allowed attachment types, and the file extension to use for each.
 const ATTACHMENT_TYPES = {
   'application/pdf': 'pdf',
   'image/png': 'png',
@@ -195,31 +194,28 @@ const ATTACHMENT_TYPES = {
 const MAX_ATTACHMENT_BYTES = 2 * 1024 * 1024
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+// Any signed-in user. Email one route to a friend, with an optional file (BR D.2).
+// We check everything again here because browser checks can be skipped.
 exports.sendEmail = postEndpoint(
   async (req) => {
     const caller = await requireUser(req)
     const { to, subject, message, attachment } = req.body || {}
 
     if (typeof to !== 'string' || !EMAIL_PATTERN.test(to) || to.length > 254) {
-      throw Object.assign(new Error('Enter a valid recipient email.'), { status: 400 })
+      throw httpError(400, 'Enter a valid recipient email.')
     }
-    if (typeof subject !== 'string' || subject.trim().length < 3 || subject.length > 120) {
-      throw Object.assign(new Error('Subject must be 3 to 120 characters.'), { status: 400 })
-    }
-    if (typeof message !== 'string' || message.trim().length < 5 || message.length > 2000) {
-      throw Object.assign(new Error('Message must be 5 to 2000 characters.'), { status: 400 })
-    }
+    checkSubjectAndMessage(subject, message)
 
     const brevoAttachments = []
     if (attachment) {
       const { name, type, content } = attachment
       if (!ATTACHMENT_TYPES[type] || typeof content !== 'string' || typeof name !== 'string') {
-        throw Object.assign(new Error('Attach a PDF, PNG, JPG, TXT or CSV file.'), { status: 400 })
+        throw httpError(400, 'Attach a PDF, PNG, JPG, TXT or CSV file.')
       }
       if (Buffer.from(content, 'base64').length > MAX_ATTACHMENT_BYTES) {
-        throw Object.assign(new Error('Attachment must be 2 MB or smaller.'), { status: 400 })
+        throw httpError(400, 'Attachment must be 2 MB or smaller.')
       }
-      // Keep only safe filename characters and force the extension that matches the real type.
+      // Clean the file name and force the right extension.
       const base = name.replace(/\.[^.]*$/, '').replace(/[^\w\- ]/g, '').slice(0, 60) || 'attachment'
       brevoAttachments.push({ name: `${base}.${ATTACHMENT_TYPES[type]}`, content })
     }
@@ -230,7 +226,9 @@ exports.sendEmail = postEndpoint(
       to: [{ email: to }],
       replyTo: { email: caller.email },
       subject: subject.trim(),
-      htmlContent: `<p>${escapeHtml(message.trim()).replace(/\n/g, '<br>')}</p><hr><p style="color:#666;font-size:12px">Sent by ${escapeHtml(caller.email)} through CommonGoal.</p>`,
+      htmlContent:
+        `<p>${escapeHtml(message.trim()).replace(/\n/g, '<br>')}</p>` +
+        `<hr><p style="color:#666;font-size:12px">Sent by ${escapeHtml(caller.email)} through CommonGoal.</p>`,
       ...(brevoAttachments.length ? { attachment: brevoAttachments } : {}),
     })
 
@@ -246,45 +244,37 @@ exports.sendEmail = postEndpoint(
   { secrets: [brevoKey] },
 )
 
-// Admin only. Emails a message to selected registered users (BR F.1 bulk email).
-// The browser sends user ids, never addresses: the server looks the addresses up, so this can
-// only reach people who actually registered and cannot be used to mail strangers. Each person
-// gets their own copy (Brevo messageVersions), so nobody sees anyone else's address, and
-// {{name}} in the text becomes that person's name.
 const MAX_BULK_RECIPIENTS = 50
 
+// Admin only. Email selected users (BR F.1).
+// The browser sends user ids, not emails, so it can only reach registered users.
+// Each person gets their own copy, and {{name}} becomes their first name.
 exports.sendBulkEmail = postEndpoint(
   async (req) => {
     const caller = await requireAdmin(req)
     const { uids, subject, message } = req.body || {}
 
     if (!Array.isArray(uids) || uids.length === 0 || uids.length > MAX_BULK_RECIPIENTS) {
-      throw Object.assign(new Error(`Pick between 1 and ${MAX_BULK_RECIPIENTS} users.`), { status: 400 })
+      throw httpError(400, `Pick between 1 and ${MAX_BULK_RECIPIENTS} users.`)
     }
     if (!uids.every((uid) => typeof uid === 'string' && uid.length > 0 && uid.length <= 128)) {
-      throw Object.assign(new Error('Invalid user selection.'), { status: 400 })
+      throw httpError(400, 'Invalid user selection.')
     }
-    if (typeof subject !== 'string' || subject.trim().length < 3 || subject.length > 120) {
-      throw Object.assign(new Error('Subject must be 3 to 120 characters.'), { status: 400 })
-    }
-    if (typeof message !== 'string' || message.trim().length < 5 || message.length > 2000) {
-      throw Object.assign(new Error('Message must be 5 to 2000 characters.'), { status: 400 })
-    }
+    checkSubjectAndMessage(subject, message)
 
-    // Stricter limit than single email: 3 bulk sends per 10 minutes.
+    // Stricter than single email: 3 bulk sends per 10 minutes.
     await enforceRateLimit(`${caller.uid}_bulk`, 3)
 
     const refs = [...new Set(uids)].map((uid) => db.collection('users').doc(uid))
     const snaps = await db.getAll(...refs)
     const recipients = snaps.filter((snap) => snap.exists && snap.data().email).map((snap) => snap.data())
-    if (recipients.length === 0) {
-      throw Object.assign(new Error('None of the selected users could be found.'), { status: 404 })
-    }
+    if (recipients.length === 0) throw httpError(404, 'None of the selected users could be found.')
 
-    const body = (name) =>
-      `<p>${escapeHtml(message.trim().replace(/\{\{\s*name\s*\}\}/gi, name)).replace(/\n/g, '<br>')}</p>` +
-      '<hr><p style="color:#666;font-size:12px">You are receiving this because you have a CommonGoal account.</p>'
     const firstName = (data) => (data.fullName || 'there').split(' ')[0].slice(0, 40)
+    const body = (name) =>
+      // A function as the replacement, so a name like "$&" is not treated as a special pattern.
+      `<p>${escapeHtml(message.trim().replace(/\{\{\s*name\s*\}\}/gi, () => name)).replace(/\n/g, '<br>')}</p>` +
+      '<hr><p style="color:#666;font-size:12px">You are receiving this because you have a CommonGoal account.</p>'
 
     await sendViaBrevo({
       to: [{ email: recipients[0].email }],
@@ -308,5 +298,5 @@ exports.sendBulkEmail = postEndpoint(
   { secrets: [brevoKey] },
 )
 
-// Public read only REST API (F.1), defined in api.js.
+// Public read-only REST API (BR F.1), in api.js.
 exports.api = require('./api').api
