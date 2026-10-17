@@ -2,7 +2,9 @@
   <div class="container mt-5">
     <h1>Admin console</h1>
 
-    <section class="mt-4">
+    <AdminOverview class="mt-4" />
+
+    <section class="mt-5">
       <h2 class="h4">Registered users</h2>
       <div class="alert alert-danger" v-if="loadError">{{ loadError }}</div>
       <div class="alert" :class="actionOk ? 'alert-success' : 'alert-danger'" role="status" v-if="actionMessage">
@@ -132,6 +134,7 @@ import { db } from '../firebase/init'
 import { currentUser } from '../stores/auth'
 import { callFunction } from '../api/functions'
 import ExportButtons from '../components/ExportButtons.vue'
+import AdminOverview from '../components/AdminOverview.vue'
 import routes from '../assets/json/routes.json'
 
 // Rows for export: the users table's own filtered and sorted rows, so the file matches the screen.
