@@ -50,6 +50,16 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // One row per email the sendEmail and bulk email functions deliver. Admins read it for the
+    // dashboard. Only the Cloud Functions write it (the Admin SDK skips these rules).
+    match /emailLog/{logId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // Per-user email rate limit counters. Nobody can touch these from a browser, only the
+    // sendEmail function, so there is deliberately no rule here and the default deny applies.
+
     // Audit log of role changes, written by setUserRole. Admins can read it.
     match /roleChanges/{changeId} {
       allow read: if isAdmin();
