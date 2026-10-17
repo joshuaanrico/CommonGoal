@@ -18,6 +18,9 @@ app.use(PrimeVue, {
   theme: {
     preset: Aura,
   },
+  // PrimeUI Community License key (free for students). Checked offline in the browser, so it
+  // is not a secret. Without it PrimeVue shows an "Invalid PrimeUI License" badge.
+  license: import.meta.env.VITE_PRIMEUI_LICENSE,
 })
 
 app.component('DataTable', DataTable)
