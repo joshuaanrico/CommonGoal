@@ -1,12 +1,12 @@
-// Security helpers for CommonGoal (BR C.4).
+// Security helpers (BR C.4).
 
-// Strips <> so stored text can't become HTML or a script tag, and caps length.
+// Removes < and > (so text can't become HTML) and cuts it to maxLength.
 export function sanitiseText(value, maxLength) {
   const stripped = value.replace(/[<>]/g, '')
   return stripped.slice(0, maxLength)
 }
 
-// Same password rule the register form checks client-side, kept here for reuse.
+// At least 8 characters, with a letter and a number.
 export function isPasswordStrong(password) {
   return password.length >= 8 && /[a-zA-Z]/.test(password) && /[0-9]/.test(password)
 }

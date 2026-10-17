@@ -1,4 +1,4 @@
-// Auth store for CommonGoal (BR C.1, C.2).
+// Auth store: who is logged in and their role (BR C.1, C.2, D.1).
 
 import { ref, computed } from 'vue'
 import {
@@ -20,16 +20,24 @@ export const isAuthenticated = computed(() => currentUser.value !== null)
 export const userRole = computed(() => userProfile.value?.role ?? null)
 export const isAdmin = computed(() => userRole.value === 'admin')
 
-// Firebase checks who is signed in a moment after the app loads. The router
-// guard waits for this, or it wrongly redirects a signed-in user to login on every refresh.
+// Firebase needs a moment to restore the login after a refresh.
+// The router waits for this promise, or it would send logged-in users to /login.
 let resolveAuthReady
 export const authReady = new Promise((resolve) => {
   resolveAuthReady = resolve
 })
 
-// uid whose profile is already loaded, so a slow first read cannot wipe a profile that
-// loginWithGoogle has just created for the same user.
+// Which user's profile we already loaded. Stops a slow read from wiping a profile
+// that register() or loginWithGoogle() just created.
 let profileUid = null
+
+// Saves a new member profile and shows it straight away.
+async function createMemberProfile(uid, email, fullName) {
+  const profile = { email, fullName, role: 'member', createdAt: serverTimestamp() }
+  await setDoc(doc(db, 'users', uid), profile)
+  userProfile.value = { ...profile, createdAt: new Date() }
+  profileUid = uid
+}
 
 onAuthStateChanged(auth, async (user) => {
   currentUser.value = user
@@ -55,22 +63,14 @@ onAuthStateChanged(auth, async (user) => {
   resolveAuthReady()
 })
 
-// Same message for every login failure, so nobody can tell which emails have accounts.
+// Same message for every login failure, so nobody can find out which emails have accounts.
 const GENERIC_AUTH_ERROR = 'Email or password is incorrect.'
 
 export async function register({ fullName, email, password }) {
   try {
     const credential = await createUserWithEmailAndPassword(auth, email, password)
-
-    // Every new account is a member. There is no admin option on the form, and
-    // the Firestore rules block anyone from writing role: 'admin' themselves.
-    await setDoc(doc(db, 'users', credential.user.uid), {
-      email,
-      fullName,
-      role: 'member',
-      createdAt: serverTimestamp(),
-    })
-
+    // Always a member. The Firestore rules also block role: 'admin'.
+    await createMemberProfile(credential.user.uid, email, fullName)
     return { ok: true }
   } catch (error) {
     if (error.code === 'auth/email-already-in-use') {
@@ -97,31 +97,22 @@ export async function login(email, password) {
   }
 }
 
-// External sign-in with a Google account (BR D.1). Google checks the password and 2-step
-// verification, the app never sees it. The first time someone signs in this way they get a
-// users/{uid} profile as a member, exactly like email registration, so the same Firestore
-// rules apply (nobody can sign up as an admin).
+// Google sign-in (BR D.1). Google checks the password, our app never sees it.
+// First time in, we create a member profile, same as normal register.
 export async function loginWithGoogle() {
   try {
     const provider = new GoogleAuthProvider()
     provider.setCustomParameters({ prompt: 'select_account' })
     const { user } = await signInWithPopup(auth, provider)
 
-    const profileRef = doc(db, 'users', user.uid)
-    const snap = await getDoc(profileRef)
+    const snap = await getDoc(doc(db, 'users', user.uid))
     if (snap.exists()) {
       userProfile.value = snap.data()
+      profileUid = user.uid
     } else {
-      const profile = {
-        email: user.email,
-        fullName: sanitiseText(user.displayName || user.email.split('@')[0], 80),
-        role: 'member',
-        createdAt: serverTimestamp(),
-      }
-      await setDoc(profileRef, profile)
-      userProfile.value = { ...profile, createdAt: new Date() }
+      const name = sanitiseText(user.displayName || user.email.split('@')[0], 80)
+      await createMemberProfile(user.uid, user.email, name)
     }
-    profileUid = user.uid
     return { ok: true }
   } catch (error) {
     if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {

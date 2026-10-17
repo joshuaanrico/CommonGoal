@@ -102,7 +102,7 @@ import GoogleSignInButton from '../components/GoogleSignInButton.vue'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { register } from '../stores/auth'
-import { sanitiseText } from '../utils/security'
+import { sanitiseText, isPasswordStrong } from '../utils/security'
 
 const router = useRouter()
 
@@ -124,7 +124,6 @@ const formError = ref(null)
 const submitting = ref(false)
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const PASSWORD_PATTERN = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/
 
 const validateFullName = (blur) => {
   if (formData.value.fullName.trim().length < 3) {
@@ -143,12 +142,12 @@ const validateEmail = (blur) => {
 }
 
 const validatePassword = (blur) => {
-  if (!PASSWORD_PATTERN.test(formData.value.password)) {
+  if (!isPasswordStrong(formData.value.password)) {
     if (blur) errors.value.password = 'Password needs at least 8 characters, a letter and a number.'
   } else {
     errors.value.password = null
   }
-  // Re-check the confirm field too, in case the password changed after it was filled.
+  // Also re-check "confirm password" in case the password changed.
   validateConfirmPassword(formData.value.confirmPassword !== '')
 }
 
@@ -164,7 +163,7 @@ const isFormValid = computed(() => {
   return (
     formData.value.fullName.trim().length >= 3 &&
     EMAIL_PATTERN.test(formData.value.email) &&
-    PASSWORD_PATTERN.test(formData.value.password) &&
+    isPasswordStrong(formData.value.password) &&
     formData.value.confirmPassword === formData.value.password
   )
 })
