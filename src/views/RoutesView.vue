@@ -33,8 +33,8 @@
       <div class="col-lg-4 col-md-6 col-12 mb-4" v-for="route in filteredRoutes" :key="route.id">
         <div class="card h-100">
           <div class="card-body">
-            <h5 class="card-title">{{ route.name }}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">{{ route.suburb }}</h6>
+            <h2 class="h5 card-title">{{ route.name }}</h2>
+            <p class="h6 card-subtitle mb-2 text-muted">{{ route.suburb }}</p>
             <p class="card-text">{{ route.description }}</p>
             <ul class="list-unstyled small">
               <li>Distance: {{ route.distanceKm }} km</li>

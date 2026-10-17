@@ -19,7 +19,7 @@
       <div class="col-lg-4 col-md-6 col-12 mb-4" v-for="audience in audiences" :key="audience.title">
         <div class="card h-100">
           <div class="card-body">
-            <h5 class="card-title">{{ audience.title }}</h5>
+            <h2 class="h5 card-title">{{ audience.title }}</h2>
             <p class="card-text">{{ audience.description }}</p>
           </div>
         </div>
