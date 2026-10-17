@@ -35,6 +35,9 @@
           <li class="nav-item">
             <RouterLink to="/join" class="nav-link" active-class="active">Join</RouterLink>
           </li>
+          <li class="nav-item">
+            <RouterLink to="/api-docs" class="nav-link" active-class="active">API</RouterLink>
+          </li>
 
           <!-- Signed out: the two ways in -->
           <template v-if="!isAuthenticated">
