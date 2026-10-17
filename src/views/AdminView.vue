@@ -16,7 +16,14 @@
         placeholder="Email, name or role"
         v-model="userFilters.global.value"
       />
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+        <p class="small text-body-secondary mb-0" aria-live="polite">
+          {{ visibleUsers.length }} of {{ users.length }} users match.
+        </p>
+        <ExportButtons :rows="visibleUsers" :columns="userColumns" name="users" title="CommonGoal registered users" />
+      </div>
       <DataTable
+        ref="usersTable"
         :value="users"
         v-model:filters="userFilters"
         filterDisplay="row"
@@ -73,7 +80,7 @@
         <!-- Calls the setUserRole Cloud Function, the only place a role can change. -->
         <Column header="Action">
           <template #body="{ data }">
-            <span class="small text-body-secondary" v-if="data.uid === currentUser?.uid">You</span>
+            <span class="badge text-bg-secondary" v-if="data.uid === currentUser?.uid">You</span>
             <button
               v-else
               type="button"
@@ -95,6 +102,9 @@
           {{ rebuilding ? 'Recalculating...' : 'Recalculate route stats' }}
         </button>
       </div>
+      <div class="mb-2">
+        <ExportButtons :rows="ratingSummary" :columns="ratingColumns" name="route-ratings" title="CommonGoal route ratings" />
+      </div>
       <DataTable
         :value="ratingSummary"
         paginator
@@ -115,13 +125,29 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { collection, getDocs } from 'firebase/firestore'
 import { FilterMatchMode } from '@primevue/core/api'
 import { db } from '../firebase/init'
 import { currentUser } from '../stores/auth'
 import { callFunction } from '../api/functions'
+import ExportButtons from '../components/ExportButtons.vue'
 import routes from '../assets/json/routes.json'
+
+// Rows for export: the users table's own filtered and sorted rows, so the file matches the screen.
+const usersTable = ref(null)
+const visibleUsers = computed(() => usersTable.value?.processedData ?? users.value)
+const userColumns = [
+  { field: 'email', header: 'Email' },
+  { field: 'fullName', header: 'Name' },
+  { field: 'role', header: 'Role' },
+  { field: 'createdLabel', header: 'Created' },
+]
+const ratingColumns = [
+  { field: 'name', header: 'Route' },
+  { field: 'average', header: 'Average rating' },
+  { field: 'count', header: 'Number of ratings' },
+]
 
 const busyUid = ref(null)
 const rebuilding = ref(false)

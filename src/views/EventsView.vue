@@ -22,12 +22,16 @@
       </div>
     </div>
 
-    <p class="text-body-secondary small" aria-live="polite">
-      {{ visibleCount }} of {{ events.length }} events match.
-    </p>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+      <p class="text-body-secondary small mb-0" aria-live="polite">
+        {{ visibleRows.length }} of {{ events.length }} events match.
+      </p>
+      <ExportButtons :rows="visibleRows" :columns="exportColumns" name="events" title="CommonGoal upcoming events" />
+    </div>
 
     <!-- BR D.3: second interactive table, same features as Clubs. -->
     <DataTable
+      ref="tableRef"
       :value="rows"
       v-model:filters="filters"
       filterDisplay="row"
@@ -42,7 +46,6 @@
       :sortOrder="1"
       tableStyle="min-width: 56rem"
       dataKey="id"
-      @filter="onFilter"
     >
       <template #empty>No events match these filters.</template>
 
@@ -139,9 +142,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { FilterMatchMode } from '@primevue/core/api'
 import events from '../assets/json/events.json'
+import ExportButtons from '../components/ExportButtons.vue'
 
 // Derived columns are computed once so they can be sorted and filtered like real fields.
 const rows = events.map((event) => ({
@@ -173,11 +177,19 @@ const emptyFilters = () => ({
 })
 
 const filters = ref(emptyFilters())
-const visibleCount = ref(rows.length)
 
-const onFilter = (event) => {
-  visibleCount.value = event.filteredValue.length
-}
+// The table's own filtered and sorted rows (all pages), used for the count and the export.
+const tableRef = ref(null)
+const visibleRows = computed(() => tableRef.value?.processedData ?? rows)
+
+const exportColumns = [
+  { field: 'title', header: 'Event' },
+  { field: 'category', header: 'Type' },
+  { field: 'suburb', header: 'Suburb' },
+  { field: 'date', header: 'Date' },
+  { field: 'spotsLeft', header: 'Spots left' },
+  { field: 'cost', header: 'Cost' },
+]
 
 const clearFilters = () => {
   filters.value = emptyFilters()

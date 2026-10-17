@@ -22,12 +22,16 @@
       </div>
     </div>
 
-    <p class="text-body-secondary small" aria-live="polite">
-      {{ visibleCount }} of {{ clubs.length }} clubs match.
-    </p>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+      <p class="text-body-secondary small mb-0" aria-live="polite">
+        {{ visibleRows.length }} of {{ clubs.length }} clubs match.
+      </p>
+      <ExportButtons :rows="visibleRows" :columns="exportColumns" name="clubs" title="CommonGoal partner clubs" />
+    </div>
 
     <!-- BR D.3: sort on every column, global search, a filter per column, 10 rows per page. -->
     <DataTable
+      ref="tableRef"
       :value="clubs"
       v-model:filters="filters"
       filterDisplay="row"
@@ -40,7 +44,6 @@
       scrollable
       tableStyle="min-width: 56rem"
       dataKey="id"
-      @filter="onFilter"
     >
       <template #empty>No clubs match these filters.</template>
 
@@ -133,9 +136,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { FilterMatchMode } from '@primevue/core/api'
 import clubs from '../assets/json/clubs.json'
+import ExportButtons from '../components/ExportButtons.vue'
 
 const uniqueSorted = (key) => [...new Set(clubs.map((club) => club[key]))].sort()
 const sports = uniqueSorted('sport')
@@ -153,12 +157,20 @@ const emptyFilters = () => ({
 })
 
 const filters = ref(emptyFilters())
-const visibleCount = ref(clubs.length)
 
-// The filter event carries the filtered rows, so the count line always matches the table.
-const onFilter = (event) => {
-  visibleCount.value = event.filteredValue.length
-}
+// The table's own filtered and sorted rows (all pages), so the count line and the export always
+// match what the person sees on screen.
+const tableRef = ref(null)
+const visibleRows = computed(() => tableRef.value?.processedData ?? clubs)
+
+const exportColumns = [
+  { field: 'name', header: 'Club' },
+  { field: 'sport', header: 'Sport' },
+  { field: 'suburb', header: 'Suburb' },
+  { field: 'members', header: 'Members' },
+  { field: 'activeTravelPct', header: 'Active travel (%)' },
+  { field: 'climateLevel', header: 'Climate level' },
+]
 
 const clearFilters = () => {
   filters.value = emptyFilters()
