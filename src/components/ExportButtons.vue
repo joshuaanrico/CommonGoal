@@ -13,10 +13,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { exportCsv, exportPdf } from '../utils/exportTable'
 
-// rows: the currently visible (filtered and sorted) rows. columns: [{ field, header }].
+// rows = what the user sees now. columns = [{ field, header }].
 const props = defineProps({
   rows: { type: Array, required: true },
   columns: { type: Array, required: true },
@@ -26,6 +26,14 @@ const props = defineProps({
 
 const busy = ref(false)
 const message = ref('')
+
+// Filter changed, so clear the old "downloaded" message.
+watch(
+  () => props.rows.length,
+  () => {
+    message.value = ''
+  },
+)
 
 const csv = () => {
   exportCsv(props.rows, props.columns, props.name)

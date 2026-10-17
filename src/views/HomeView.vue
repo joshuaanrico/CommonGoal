@@ -29,7 +29,7 @@
     <!-- Impact numbers -->
     <div class="row text-center mb-5">
       <div class="col-lg-3 col-md-6 col-12 mb-4" v-for="stat in impactStats" :key="stat.label">
-        <h2 class="text-primary">{{ stat.value }}</h2>
+        <p class="h2 text-primary">{{ stat.value }}</p>
         <p class="text-muted">{{ stat.label }}</p>
       </div>
     </div>
