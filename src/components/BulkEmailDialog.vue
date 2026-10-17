@@ -2,6 +2,7 @@
   <Dialog
     v-model:visible="open"
     modal
+    :draggable="false"
     header="Email selected users"
     :style="{ width: '34rem', maxWidth: '95vw' }"
     :closable="!sending"
