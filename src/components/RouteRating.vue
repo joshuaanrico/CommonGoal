@@ -1,14 +1,18 @@
 <template>
   <div class="mt-3 pt-3 border-top">
-    <p class="mb-2 small" :aria-label="summaryLabel">
-      <strong v-if="average !== null">{{ average }} / 5</strong>
-      <strong v-else>No ratings yet</strong>
-      <span class="text-body-secondary" v-if="count > 0"> ({{ count }} rating{{ count === 1 ? '' : 's' }})</span>
+    <p class="mb-2 small">
+      <!-- Screen readers read the hidden sentence. The short visual version is hidden from them. -->
+      <span class="visually-hidden">{{ summaryLabel }}</span>
+      <span aria-hidden="true">
+        <strong v-if="average !== null">{{ average }} / 5</strong>
+        <strong v-else>No ratings yet</strong>
+        <span class="text-body-secondary" v-if="count > 0"> ({{ count }} rating{{ count === 1 ? '' : 's' }})</span>
+      </span>
     </p>
 
     <div v-if="isAuthenticated">
       <div class="btn-group btn-group-sm mb-2" role="group" :aria-label="`Your rating for ${routeName}`">
-        <!-- aria-pressed tells a screen reader which score is chosen, the label says what each button means. -->
+        <!-- aria-pressed says which score is picked. -->
         <button
           v-for="value in 5"
           :key="value"
@@ -38,7 +42,7 @@
       <div class="text-success small mt-1" role="status" v-if="saved">Thanks, your rating was saved.</div>
     </div>
     <p class="small text-body-secondary" v-else>
-      <RouterLink to="/login">Log in</RouterLink> to rate this route.
+      <RouterLink :to="{ name: 'Login', query: { redirect: '/routes' } }">Log in</RouterLink> to rate this route.
     </p>
   </div>
 </template>
@@ -68,7 +72,7 @@ const submitError = ref(null)
 const average = computed(() => averageFor(props.routeId))
 const count = computed(() => countFor(props.routeId))
 
-// Spoken summary, so a screen reader hears one clear sentence instead of "3.5 / 5 (2 ratings)".
+// One clear sentence for screen readers.
 const summaryLabel = computed(() =>
   average.value === null
     ? `${props.routeName} has no ratings yet`

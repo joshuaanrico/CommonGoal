@@ -113,7 +113,7 @@ const submitForm = async () => {
   submitting.value = false
 
   if (result.ok) {
-    // If login was triggered by visiting a protected page, go back there.
+    // Go back to the page the user wanted, or the dashboard.
     router.push(route.query.redirect || '/dashboard')
   } else {
     formError.value = result.error
