@@ -307,3 +307,6 @@ exports.sendBulkEmail = postEndpoint(
   },
   { secrets: [brevoKey] },
 )
+
+// Public read only REST API (F.1), defined in api.js.
+exports.api = require('./api').api
