@@ -1,0 +1,402 @@
+/* CommonGoal theme.
+   One green brand colour for Bootstrap and PrimeVue, so buttons, links and
+   tables all match. Colours checked for WCAG AA contrast on white. */
+
+:root {
+  --cg-green-950: #022c22;
+  --cg-green-900: #064e3b;
+  --cg-green-800: #065f46;
+  --cg-green-700: #047857; /* brand: 5.5:1 on white */
+  --cg-green-600: #059669;
+  --cg-green-200: #a7f3d0;
+  --cg-green-100: #d1fae5;
+  --cg-green-50: #ecfdf5;
+
+  --cg-ink: #10231a;
+  --cg-muted: #4a5c53; /* 7:1 on white */
+  --cg-bg: #f6f9f7;
+  --cg-surface: #ffffff;
+  --cg-border: #dde6e1;
+  --cg-border-strong: #c5d3cb;
+
+  --cg-radius: 0.75rem;
+  --cg-radius-lg: 1.25rem;
+  --cg-shadow: 0 1px 2px rgba(16, 35, 26, 0.05), 0 6px 20px rgba(16, 35, 26, 0.05);
+  --cg-shadow-lg: 0 2px 4px rgba(16, 35, 26, 0.06), 0 18px 40px rgba(16, 35, 26, 0.1);
+
+  /* Bootstrap variables */
+  --bs-primary: var(--cg-green-700);
+  --bs-primary-rgb: 4, 120, 87;
+  --bs-primary-text-emphasis: var(--cg-green-900);
+  --bs-primary-bg-subtle: var(--cg-green-50);
+  --bs-primary-border-subtle: var(--cg-green-200);
+  --bs-success: var(--cg-green-700);
+  --bs-success-rgb: 4, 120, 87;
+  --bs-link-color: var(--cg-green-700);
+  --bs-link-color-rgb: 4, 120, 87;
+  --bs-link-hover-color: var(--cg-green-900);
+  --bs-link-hover-color-rgb: 6, 78, 59;
+  --bs-body-font-family: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --bs-body-color: var(--cg-ink);
+  --bs-body-color-rgb: 16, 35, 26;
+  --bs-body-bg: var(--cg-bg);
+  --bs-secondary-color: var(--cg-muted);
+  --bs-secondary-bg: #e9f0ec;
+  --bs-tertiary-bg: #eff4f1;
+  --bs-border-color: var(--cg-border);
+  --bs-border-radius: 0.5rem;
+  --bs-border-radius-lg: var(--cg-radius);
+  --bs-focus-ring-color: rgba(4, 120, 87, 0.3);
+}
+
+body {
+  font-feature-settings: 'cv11', 'ss01';
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5 {
+  color: var(--cg-ink);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+h1,
+.h1 {
+  font-weight: 750;
+  letter-spacing: -0.025em;
+}
+
+code {
+  color: var(--cg-green-800);
+}
+
+/* ---- Page layout ---- */
+
+.page {
+  padding-top: 2.75rem;
+  padding-bottom: 4rem;
+}
+
+/* Title and lede at the top of every page. */
+.page h1 {
+  font-size: clamp(2rem, 1.4rem + 2vw, 2.75rem);
+  margin-bottom: 0.75rem;
+}
+
+.page h1 + p {
+  color: var(--cg-muted);
+  font-size: 1.075rem;
+  max-width: 48rem;
+  margin-bottom: 2rem;
+}
+
+.page h1.text-center + p {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ---- Buttons ---- */
+
+.btn {
+  --bs-btn-font-weight: 600;
+  --bs-btn-padding-x: 1.1rem;
+  --bs-btn-padding-y: 0.55rem;
+  --bs-btn-border-radius: 0.6rem;
+  --bs-btn-focus-box-shadow: 0 0 0 0.25rem rgba(4, 120, 87, 0.3);
+}
+
+.btn-sm {
+  --bs-btn-padding-x: 0.75rem;
+  --bs-btn-padding-y: 0.3rem;
+  --bs-btn-border-radius: 0.5rem;
+}
+
+.btn-lg {
+  --bs-btn-padding-x: 1.5rem;
+  --bs-btn-padding-y: 0.75rem;
+  --bs-btn-border-radius: 0.75rem;
+}
+
+.btn-primary,
+.btn-success {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--cg-green-700);
+  --bs-btn-border-color: var(--cg-green-700);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--cg-green-800);
+  --bs-btn-hover-border-color: var(--cg-green-800);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--cg-green-900);
+  --bs-btn-active-border-color: var(--cg-green-900);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: var(--cg-green-700);
+  --bs-btn-disabled-border-color: var(--cg-green-700);
+  box-shadow: 0 1px 2px rgba(4, 120, 87, 0.25);
+}
+
+.btn-outline-primary,
+.btn-outline-success {
+  --bs-btn-color: var(--cg-green-700);
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: var(--cg-green-700);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--cg-green-700);
+  --bs-btn-hover-border-color: var(--cg-green-700);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--cg-green-800);
+  --bs-btn-active-border-color: var(--cg-green-800);
+  --bs-btn-disabled-color: var(--cg-green-700);
+  --bs-btn-disabled-bg: #fff;
+  --bs-btn-disabled-border-color: var(--cg-green-700);
+}
+
+.btn-secondary {
+  --bs-btn-color: var(--cg-ink);
+  --bs-btn-bg: #e6eee9;
+  --bs-btn-border-color: #e6eee9;
+  --bs-btn-hover-color: var(--cg-ink);
+  --bs-btn-hover-bg: #d6e2db;
+  --bs-btn-hover-border-color: #d6e2db;
+  --bs-btn-active-color: var(--cg-ink);
+  --bs-btn-active-bg: #c8d7ce;
+  --bs-btn-active-border-color: #c8d7ce;
+  --bs-btn-disabled-color: var(--cg-ink);
+  --bs-btn-disabled-bg: #e6eee9;
+  --bs-btn-disabled-border-color: #e6eee9;
+}
+
+.btn-outline-secondary,
+.btn-outline-dark {
+  --bs-btn-color: var(--cg-ink);
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: var(--cg-border-strong);
+  --bs-btn-hover-color: var(--cg-ink);
+  --bs-btn-hover-bg: #eef4f0;
+  --bs-btn-hover-border-color: #b3c4ba;
+  --bs-btn-active-color: var(--cg-ink);
+  --bs-btn-active-bg: #e2ebe6;
+  --bs-btn-active-border-color: #b3c4ba;
+  --bs-btn-disabled-color: var(--cg-muted);
+  --bs-btn-disabled-bg: #fff;
+  --bs-btn-disabled-border-color: var(--cg-border);
+}
+
+.btn-link {
+  --bs-btn-color: var(--cg-green-700);
+  --bs-btn-hover-color: var(--cg-green-900);
+  --bs-btn-font-weight: 500;
+}
+
+/* ---- Forms ---- */
+
+.form-label {
+  font-weight: 600;
+  font-size: 0.925rem;
+  margin-bottom: 0.4rem;
+}
+
+.form-control,
+.form-select {
+  border-color: var(--cg-border-strong);
+  border-radius: 0.6rem;
+  padding: 0.6rem 0.85rem;
+  background-color: #fff;
+}
+
+.form-control-sm,
+.form-select-sm {
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.45rem;
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+  border-color: var(--cg-green-700);
+  box-shadow: 0 0 0 0.25rem rgba(4, 120, 87, 0.2);
+}
+
+.form-check-input:checked {
+  background-color: var(--cg-green-700);
+  border-color: var(--cg-green-700);
+}
+
+.input-group > .form-control {
+  border-radius: 0.6rem 0 0 0.6rem;
+}
+
+.input-group > .btn {
+  border-radius: 0 0.6rem 0.6rem 0;
+}
+
+/* Form pages (log in, register, join, share): the form sits on a card. */
+.form-card {
+  background: var(--cg-surface);
+  border: 1px solid var(--cg-border);
+  border-radius: var(--cg-radius-lg);
+  box-shadow: var(--cg-shadow);
+  padding: 2rem 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .form-card {
+    padding: 2.5rem 2.75rem;
+  }
+}
+
+/* ---- Cards, lists, alerts ---- */
+
+.card {
+  --bs-card-border-color: var(--cg-border);
+  --bs-card-border-radius: var(--cg-radius);
+  --bs-card-inner-border-radius: calc(var(--cg-radius) - 1px);
+  --bs-card-spacer-y: 1.35rem;
+  --bs-card-spacer-x: 1.35rem;
+  box-shadow: var(--cg-shadow);
+}
+
+.list-group {
+  --bs-list-group-border-color: var(--cg-border);
+  --bs-list-group-border-radius: var(--cg-radius);
+}
+
+.alert {
+  --bs-alert-border-radius: var(--cg-radius);
+}
+
+.badge {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+pre.bg-body-secondary {
+  background: #10231a !important;
+  color: #e6f4ec;
+  border-radius: var(--cg-radius) !important;
+}
+
+pre.bg-body-secondary code {
+  color: inherit;
+}
+
+/* ---- PrimeVue tables ---- */
+
+.p-datatable {
+  background: var(--cg-surface);
+  border: 1px solid var(--cg-border);
+  border-radius: var(--cg-radius-lg);
+  box-shadow: var(--cg-shadow);
+  overflow: hidden;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background: #f1f6f3;
+  color: var(--cg-ink);
+  font-weight: 650;
+  font-size: 0.875rem;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  color: var(--cg-ink);
+}
+
+.p-datatable .p-paginator {
+  border-top: 1px solid var(--cg-border);
+}
+
+/* Climate level badges (Clubs table). Text colours are AA on their backgrounds. */
+.level {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.level::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.8;
+}
+
+.level-gold {
+  background: #fdf0c4;
+  color: #6b4a03;
+}
+
+.level-silver {
+  background: #e7ebee;
+  color: #3a4550;
+}
+
+.level-bronze {
+  background: #fbe3d3;
+  color: #7a3412;
+}
+
+.level-getting-started {
+  background: #dff1fb;
+  color: #0b4f73;
+}
+
+/* Small facts on route cards. */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0;
+  margin: 0 0 0.25rem;
+  list-style: none;
+}
+
+.chips li {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: #eef4f0;
+  color: var(--cg-ink);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.chips li.chip-yes {
+  background: var(--cg-green-50);
+  color: var(--cg-green-900);
+  box-shadow: inset 0 0 0 1px var(--cg-green-200);
+}
+
+/* Accessibility overrides of the defaults in responsive.css */
+.skip-link {
+  background: var(--cg-green-900);
+}
+
+:focus-visible {
+  outline-color: var(--cg-green-700);
+}
+
+/* Search and filter bar above lists and tables. */
+.toolbar {
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0.5rem 0.75rem 1rem;
+  background: var(--cg-surface);
+  border: 1px solid var(--cg-border);
+  border-radius: var(--cg-radius);
+}
+
+/* Keep the footer at the bottom on short pages. */
+#main {
+  min-height: 70vh;
+}

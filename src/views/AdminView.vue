@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div class="container page">
     <h1>Admin console</h1>
 
     <AdminOverview class="mt-4" />

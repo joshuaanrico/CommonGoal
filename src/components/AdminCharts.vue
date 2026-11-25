@@ -86,9 +86,9 @@ import { useAdminData } from '../composables/useAdminData'
 
 const { users, ratings, loading } = useAdminData()
 
-const GREEN = '#198754'
-const BLUE = '#0d6efd'
-const GREY = '#6c757d'
+const GREEN = '#047857'
+const BLUE = '#0369a1'
+const GREY = '#64748b'
 
 // Charts draw on a canvas, so give them the page's text colour.
 const textColour = getComputedStyle(document.documentElement).getPropertyValue('--bs-body-color') || '#212529'

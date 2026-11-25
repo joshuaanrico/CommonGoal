@@ -1,12 +1,12 @@
 <template>
-  <div class="container mt-5">
+  <div class="container page">
     <h1>Upcoming Events</h1>
     <p>
       Walk to the game days, bike buses, workshops and tree plantings run with partner clubs. Filter by
       type, suburb or date to find one near you.
     </p>
 
-    <div class="row g-2 align-items-end mb-3">
+    <div class="row g-2 align-items-end mb-3 toolbar">
       <div class="col-md-6">
         <label for="eventsSearch" class="form-label">Search all columns</label>
         <input

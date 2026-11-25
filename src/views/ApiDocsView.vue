@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div class="container page">
     <h1>CommonGoal public API</h1>
     <p>
       Anyone can read CommonGoal's routes, clubs and route ratings as JSON. It is free, needs no account or

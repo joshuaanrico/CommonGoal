@@ -1,9 +1,9 @@
 <template>
-  <div class="container mt-5">
+  <div class="container page">
     <h1>Active Travel Routes</h1>
     <p>Find a walking or riding route near your club's training and game days.</p>
 
-    <div class="row mb-4">
+    <div class="row mb-4 g-3 toolbar">
       <div class="col-md-8">
         <label for="search" class="form-label">Search by name or suburb</label>
         <input
@@ -35,12 +35,12 @@
           <div class="card-body">
             <h2 class="h5 card-title">{{ route.name }}</h2>
             <p class="h6 card-subtitle mb-2 text-muted">{{ route.suburb }}</p>
-            <p class="card-text">{{ route.description }}</p>
-            <ul class="list-unstyled small">
-              <li>Distance: {{ route.distanceKm }} km</li>
-              <li>Surface: {{ route.surface }}</li>
-              <li>Shade: {{ route.hasShade ? 'Yes' : 'No' }}</li>
-              <li>Step-free: {{ route.stepFree ? 'Yes' : 'No' }}</li>
+            <p class="card-text text-body-secondary">{{ route.description }}</p>
+            <ul class="chips" :aria-label="`About ${route.name}`">
+              <li>{{ route.distanceKm }} km</li>
+              <li>{{ route.surface }}</li>
+              <li :class="{ 'chip-yes': route.hasShade }">{{ route.hasShade ? 'Shaded' : 'No shade' }}</li>
+              <li :class="{ 'chip-yes': route.stepFree }">{{ route.stepFree ? 'Step-free' : 'Has steps' }}</li>
             </ul>
             <RouteRating :route-id="route.id" :route-name="route.name" />
           </div>

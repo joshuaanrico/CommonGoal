@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5 text-center">
+  <div class="container page text-center">
     <h1>Access denied</h1>
     <p class="text-body-secondary">
       You do not have permission to view that page. Admin access is required.

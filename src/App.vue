@@ -1,5 +1,6 @@
 <script setup>
 import BHeader from './components/BHeader.vue'
+import AppFooter from './components/AppFooter.vue'
 
 // Move focus to the content (a normal #main link would only scroll).
 const focusMain = () => document.getElementById('main')?.focus()
@@ -15,6 +16,8 @@ const focusMain = () => document.getElementById('main')?.focus()
   <main id="main" tabindex="-1">
     <router-view></router-view>
   </main>
+
+  <AppFooter />
 </template>
 
 <style scoped></style>

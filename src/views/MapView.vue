@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div class="container page">
     <h1>Route Map</h1>
     <p>
       See every active travel route on the map, search for a place, then get walking or riding
@@ -12,6 +12,7 @@
 
     <div class="row g-4">
       <div class="col-lg-4">
+        <div class="panel">
         <!-- Feature 1: place search -->
         <form @submit.prevent="runSearch" role="search" aria-label="Search for a place">
           <label for="placeSearch" class="form-label">Search for a place</label>
@@ -85,6 +86,7 @@
             </button>
           </div>
         </div>
+        </div>
       </div>
 
       <div class="col-lg-8">
@@ -92,12 +94,12 @@
         <div ref="mapEl" class="route-map" role="region" aria-label="Map of active travel routes, a list of the same routes follows"></div>
 
         <h2 class="h5 mt-4">Routes on the map</h2>
-        <ul class="list-unstyled mb-0">
-          <li v-for="route in routes" :key="route.id" class="mb-1">
-            <button type="button" class="btn btn-link p-0 text-start" @click="focusRoute(route)">
-              {{ route.name }}
+        <ul class="route-list">
+          <li v-for="route in routes" :key="route.id">
+            <button type="button" class="route-item" @click="focusRoute(route)">
+              <span class="route-name">{{ route.name }}</span>
+              <span class="route-meta">{{ route.suburb }}, {{ route.distanceKm }} km</span>
             </button>
-            <span class="text-body-secondary small">, {{ route.suburb }}, {{ route.distanceKm }} km</span>
           </li>
         </ul>
       </div>
@@ -157,7 +159,7 @@ onMounted(() => {
     detail.textContent = `${route.suburb}, ${route.distanceKm} km, ${route.surface}`
     box.append(title, detail)
 
-    new mapboxgl.Marker({ color: '#198754' })
+    new mapboxgl.Marker({ color: '#047857' })
       .setLngLat([route.lng, route.lat])
       .setPopup(new mapboxgl.Popup({ offset: 24 }).setDOMContent(box))
       .addTo(map)
@@ -245,7 +247,7 @@ const runDirections = async () => {
       type: 'line',
       source: 'trip-line',
       layout: { 'line-join': 'round', 'line-cap': 'round' },
-      paint: { 'line-color': '#0d6efd', 'line-width': 5 },
+      paint: { 'line-color': '#1d4ed8', 'line-width': 5 },
     })
 
     const bounds = result.line.coordinates.reduce(
@@ -265,7 +267,61 @@ const runDirections = async () => {
 <style scoped>
 .route-map {
   width: 100%;
-  height: 28rem;
-  border-radius: 0.5rem;
+  height: 34rem;
+  border-radius: var(--cg-radius-lg);
+  border: 1px solid var(--cg-border);
+  box-shadow: var(--cg-shadow);
+}
+
+.panel {
+  background: var(--cg-surface);
+  border: 1px solid var(--cg-border);
+  border-radius: var(--cg-radius-lg);
+  box-shadow: var(--cg-shadow);
+  padding: 1.5rem;
+}
+
+@media (min-width: 992px) {
+  .panel {
+    position: sticky;
+    top: 5.5rem;
+  }
+}
+
+.route-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 0.6rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.route-item {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  background: var(--cg-surface);
+  border: 1px solid var(--cg-border);
+  border-radius: var(--cg-radius);
+  color: var(--cg-ink);
+}
+
+.route-item:hover {
+  border-color: var(--cg-green-600);
+  background: var(--cg-green-50);
+}
+
+.route-name {
+  font-weight: 650;
+  color: var(--cg-green-800);
+}
+
+.route-meta {
+  font-size: 0.85rem;
+  color: var(--cg-muted);
 }
 </style>

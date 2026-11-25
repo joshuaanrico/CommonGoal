@@ -1,7 +1,7 @@
 <template>
-  <div class="container mt-5">
+  <div class="container page">
     <div class="row">
-      <div class="col-md-8 offset-md-2">
+      <div class="col-lg-8 mx-auto form-card">
         <h1>Share a route</h1>
         <p>
           Email a route to a friend or a club teammate, with an optional attachment such as a map or a

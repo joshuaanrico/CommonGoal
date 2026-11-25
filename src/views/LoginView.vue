@@ -1,7 +1,7 @@
 <template>
-  <div class="container mt-5">
+  <div class="container page">
     <div class="row">
-      <div class="col-md-6 offset-md-3">
+      <div class="col-md-9 col-lg-6 mx-auto form-card">
         <h1 class="text-center">Log in</h1>
 
         <div class="alert alert-danger" role="alert" v-if="formError">{{ formError }}</div>

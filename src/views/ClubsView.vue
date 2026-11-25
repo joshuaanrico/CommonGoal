@@ -1,12 +1,12 @@
 <template>
-  <div class="container mt-5">
+  <div class="container page">
     <h1>Climate-ready Clubs</h1>
     <p>
       Partner clubs across Melbourne's north, how many members they have, how many already walk or
       ride to sport, and how far along the CommonGoal climate-ready program they are.
     </p>
 
-    <div class="row g-2 align-items-end mb-3">
+    <div class="row g-2 align-items-end mb-3 toolbar">
       <div class="col-md-6">
         <label for="clubsSearch" class="form-label">Search all columns</label>
         <input
@@ -119,6 +119,11 @@
       </Column>
 
       <Column field="climateLevel" header="Climate level" sortable :showFilterMenu="false">
+        <template #body="{ data }">
+          <span class="level" :class="`level-${data.climateLevel.toLowerCase().replace(/\s+/g, '-')}`">
+            {{ data.climateLevel }}
+          </span>
+        </template>
         <template #filter="{ filterModel, filterCallback }">
           <select
             class="form-select form-select-sm"
